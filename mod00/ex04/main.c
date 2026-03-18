@@ -3,7 +3,7 @@
 
 int	main()
 {
-	int	t = 0, n = 0;
+	int	t = 0;
 
 	DDRB |= (1 << PB0);
 	DDRB |= (1 << PB1);
@@ -11,55 +11,35 @@ int	main()
 	DDRB |= (1 << PB3);
 	DDRD &= ~(1 << PD2);
 	DDRD &= ~(1 << PD3);
+	DDRD &= ~(1 << PD4);
+
+	
+	PORTD |= (1 << PD2);
+	PORTD |= (1 << PD3);
+	PORTD |= (1 << PD4);
 
 	while (1)
-	{
-		if (!n)
+    {
+		if (!(PIND & (1 << PD2)))
 		{
-			n = 1;
-			if (!(PIND & (1 << PD2)) && t < 4)
-				t++;
-			if (!(PIND & (1 << PD3)) && t > 0)
-				t--;
+			t++;
+			_delay_ms(200);
+			while (!(PIND & (1 << PD2)));
+		}
+        if (!(PIND & (1 << PD3)))
+        {
+			t = 0;
+			_delay_ms(200);
+			while (!(PIND & (1 << PD3)));
+		}
+        if (!(PIND & (1 << PD4)))
+		{
+			t--;
+			_delay_ms(200);
+			while (!(PIND & (1 << PD4)));
 		}
 
-		if (PIND & (1 << PD2) && (PIND & (1 << PD3)) && n)
-			n = 0;
-	
-		switch (t)
-		{
-			case 0:
-				PORTB &= ~(1 << PB0);
-				PORTB &= ~(1 << PB1);
-				PORTB &= ~(1 << PB2);
-				PORTB &= ~(1 << PB3);
-				break;
-			case 1:
-				PORTB |= (1 << PB0);
-				PORTB &= ~(1 << PB1);
-				PORTB &= ~(1 << PB2);
-				PORTB &= ~(1 << PB3);
-				break;
-			case 2:
-				PORTB |= (1 << PB0);
-				PORTB |= (1 << PB1);
-				PORTB &= ~(1 << PB2);
-				PORTB &= ~(1 << PB3);
-				break;
-			case 3:
-				PORTB |= (1 << PB0);
-				PORTB |= (1 << PB1);
-				PORTB |= (1 << PB2);
-				PORTB &= ~(1 << PB3);
-				break;
-			case 4:
-				PORTB |= (1 << PB0);
-				PORTB |= (1 << PB1);
-				PORTB |= (1 << PB2);
-				PORTB |= (1 << PB3);
-				break;
-		}
-	}
-
+        PORTB = (PORTB & 0xF0) | (t & 0x0F);
+    }
 	return (0);
 }
