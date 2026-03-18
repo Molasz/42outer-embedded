@@ -3,20 +3,11 @@
 
 int	main()
 {
-	int	t = 0;
+	uint8_t	t = 0;
 
-	DDRB |= (1 << PB0);
-	DDRB |= (1 << PB1);
-	DDRB |= (1 << PB2);
-	DDRB |= (1 << PB3);
-	DDRD &= ~(1 << PD2);
-	DDRD &= ~(1 << PD3);
-	DDRD &= ~(1 << PD4);
-
-	
-	PORTD |= (1 << PD2);
-	PORTD |= (1 << PD3);
-	PORTD |= (1 << PD4);
+	DDRB |= (1 << PB0) | (1 << PB1) | (1 << PB2) | (1 << PB3);
+	DDRD &= ~((1 << PD2) | (1 << PD3) | (1 << PD4));
+	PORTD |= (1 << PD2) | (1 << PD3) | (1 << PD4);
 
 	while (1)
     {
