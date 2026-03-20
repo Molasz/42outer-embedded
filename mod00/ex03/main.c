@@ -3,22 +3,18 @@
 
 int	main()
 {
-	int	t = 0;
-
 	DDRB |= (1 << PB0);
 	DDRD &= ~(1 << PD2);
 	PORTD |= (1 << PD2);
 
 	while (1)
 	{
-		if (t == 0 && !(PIND & (1 << PD2)))
+		if (!(PIND & (1 << PD2)))
 		{
-			t = 1;
 			PORTB ^= (1 << PB0);
+			_delay_ms(200);
+			while (!(PIND & (1 << PD2)));
 		}
-	
-		if (!(PIND & (1 << PD2)) == 0)
-			t = 0;
 	}
 
 	return (0);
