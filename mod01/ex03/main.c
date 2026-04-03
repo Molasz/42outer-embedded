@@ -12,12 +12,12 @@ int	main()
 	int	duty = 5;
 
 	DDRB	|= (1 << PB1);
-	DDRD &= ~((1 << PD2) | (1 << PD3) | (1 << PD4));
+	DDRD	&= ~((1 << PD2) | (1 << PD3) | (1 << PD4));
 	TCCR1A	|= (1 << COM1A1) | (1 << WGM11);
 	TCCR1B	|= (1 << WGM12) | (1 << WGM13);
 	ICR1	= 15625 - 1;
 	OCR1A	= ICR1 * duty / 10;
-	TCCR1B	|= (1 << CS12) | ( 1 << CS10);
+	TCCR1B	|= (1 << CS12) | ( 1 << CS10);				 //Prescalar 1024
 
 	while (1)
 	{
