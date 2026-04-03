@@ -1,6 +1,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
+
 void uart_init()
 {
 	UCSR0A |= (1 << U2X0);
@@ -15,17 +16,25 @@ void	uart_tx(char c)
 	UDR0 = c;
 }
 
+void	uart_printstr(const char *str)
+{
+	int			i = 0;
+
+	while (str[i])
+		uart_tx(str[i++]);
+}
+
 void timer_init()
 {
 	TCCR1B |= (1 << WGM12);
 	TIMSK1 |= (1 << OCIE1A);
-	OCR1A = 15624;
+	OCR1A = 15624 * 2;
 	TCCR1B |= (1 << CS12) | (1 << CS10);
 }
 
 ISR(TIMER1_COMPA_vect)
 {
-	uart_tx('Z');
+	uart_printstr("Hello world!");
 }
 
 int	main()

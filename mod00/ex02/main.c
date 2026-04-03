@@ -6,7 +6,6 @@ int	main()
 	DDRD &= ~(1 << PD2); // Read 0
 	PORTD |= (1 << PD2); // Pull-up
 						 // 13.2.3
-
 	while (1)
 	{
 		if (PIND & (1 << PD2))
