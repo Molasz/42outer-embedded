@@ -30,7 +30,7 @@ int	main()
 			while (!(PIND & (1 << PD4)));
 		}
 
-        PORTB = (PORTB & 0xF0) | (t & 0x0F);
+        PORTB = (PORTB & 0xF0) | (t & 0x0F) // Write 4 bits;
     }
 	return (0);
 }

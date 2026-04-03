@@ -11,7 +11,7 @@ int	main()
 	{
 		if (!(PIND & (1 << PD2)))
 		{
-			PORTB ^= (1 << PB0);
+			PORTB ^= (1 << PB0); // !PB0
 			_delay_ms(200);
 			while (!(PIND & (1 << PD2)));
 		}

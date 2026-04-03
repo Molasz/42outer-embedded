@@ -2,9 +2,9 @@
 
 int	main()
 {
-	DDRB |= (1 << PB0);
+	DDRB |= (1 << PB0); // READ / WRITE
 
-	PORTB |= (1 << PB0);
+	PORTB |= (1 << PB0); // ON / OFF
 
 	while (1);
 
