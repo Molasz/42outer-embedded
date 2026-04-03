@@ -17,7 +17,7 @@ int	main()
 	TCCR1B	|= (1 << WGM12) | (1 << WGM13);
 	ICR1	= 15625 - 1;
 	OCR1A	= ICR1 * duty / 10;
-	TCCR1B	|= (1 << CS12) | ( 1 << CS10);				 //Prescalar 1024
+	TCCR1B	|= (1 << CS12) | ( 1 << CS10);				 // Prescalar 1024
 
 	while (1)
 	{
