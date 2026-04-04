@@ -23,7 +23,7 @@ void timer_init()
 	TCCR1B |= (1 << CS12) | (1 << CS10);		// Prescalar 1024
 }
 
-ISR(TIMER1_COMPA_vect)							// Call on timer done
+ISR(TIMER1_COMPA_vect)							// 11.1 Call on timer done
 {
 	uart_tx('Z');
 }
