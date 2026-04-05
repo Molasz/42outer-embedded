@@ -6,14 +6,16 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:01 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/05 02:41:53 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/05 03:30:13 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <avr/io.h>
+#include <util/delay.h>
 
 # define USER "molasz-a"
 # define PASS "pass"
+# define BUFF_SIZE 32
 
 void uart_init()
 {
@@ -44,56 +46,84 @@ void	uart_printstr(const char *str)
 		uart_tx(str[i++]);
 }
 
+int	str_eq(const char *a, const char *b)
+{
+	int	i = 0;
+
+	while (a[i] && b[i])
+	{
+		if (a[i] != b[i])
+			return (0);
+		i++;
+	}
+	return (a[i] == b[i]);
+}
+
 int	validate_str(const char *str, char hide)
 {
+	char	buf[BUFF_SIZE];
 	char	c = 0;
-	int		r = 0;
 	int		i = 0;
 
 	while (c != '\r')
 	{
 		c = uart_rx();
-		if (c > 31 && c != 127)
+		if (c == 127 || c == '\b')
 		{
-			if (!r && str[i])
+			if (i)
 			{
-				if (str[i])
-					r |= str[i] != c;
-				else
-					r = 1;
+				i--;
+				uart_printstr("\b \b");
 			}
-			i++;
 		}
-
-		if (hide && c > 31 && c != 127)
-			uart_tx(hide);
-		else
+		else if (c != '\r' && i < BUFF_SIZE - 1)
+		{
+			buf[i++] = c;
+			if (hide)
+				c = hide;
 			uart_tx(c);
+		}
 	}
-	uart_printstr("\r\n");
-	return (r);
+	buf[i] = '\0';
+	return (!str_eq(buf, str));
+}
+
+void	blink_leds(uint8_t rg, char *str)
+{
+	int	i;
+
+	i = 0;
+	uart_printstr(str);
+	while (i < 50)
+	{
+		PORTB ^= (1 << rg);
+		_delay_ms(70);
+		i++;
+	}
+
+	PORTB &= ~(1 << rg);
+	uart_printstr("\r\n\r\n");
 }
 
 int	main()
 {
-	int	r = 0;
+	int	r;
+
+	DDRB |= (1 << PB0);
 
 	uart_init();
-
 	while (1)
 	{
+		r = 0;
 		uart_printstr("Enter your login:\r\nusername: ");
 		r |= validate_str(USER, 0);
-		uart_printstr("password: ");
+		uart_printstr("\r\npassword: ");
 		r |= validate_str(PASS, '*');
-		if (r)
-			uart_printstr("Bad combination username/password\r\n");
-		else
-		{
-			uart_printstr("Welcome!\r\n");
-		}
 		uart_printstr("\r\n");
+		if (r)
+			blink_leds(PB1, "Bad combination username/password");
+		else
+			blink_leds(PB0, "Welcome!");
 	}
-
 	return (0);
 }
