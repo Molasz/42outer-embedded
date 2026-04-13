@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:01 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/05 03:30:13 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/13 19:12:54 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	uart_printstr(const char *str)
 		uart_tx(str[i++]);
 }
 
-int	str_eq(const char *a, const char *b)
+int	strcmp(const char *a, const char *b)
 {
 	int	i = 0;
 
@@ -85,7 +85,7 @@ int	validate_str(const char *str, char hide)
 		}
 	}
 	buf[i] = '\0';
-	return (!str_eq(buf, str));
+	return (!strcmp(buf, str));
 }
 
 void	blink_leds(uint8_t rg, char *str)

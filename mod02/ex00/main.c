@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:44 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/05 01:26:29 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/13 18:18:56 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,11 +31,11 @@ void timer_init()
 {
 	TCCR1B |= (1 << WGM12);						// CTC
 	TIMSK1 |= (1 << OCIE1A);					// Enable interrupt
-	OCR1A = 15624;								// Duty
+	OCR1A = 15624;								// Compare register
 	TCCR1B |= (1 << CS12) | (1 << CS10);		// Prescalar 1024
 }
 
-ISR(TIMER1_COMPA_vect)							// 11.1 Call on timer done
+ISR(TIMER1_COMPA_vect)							// 11.1 Call on timer match
 {
 	uart_tx('Z');
 }

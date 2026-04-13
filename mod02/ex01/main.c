@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/05 01:26:40 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/13 18:47:51 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void timer_init()
 
 ISR(TIMER1_COMPA_vect)
 {
-	uart_printstr("Hello world!");
+	uart_printstr("Hello world!\r\n");
 }
 
 int	main()
