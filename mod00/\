@@ -5,12 +5,28 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/04/05 01:22:32 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/13 14:34:21 by molasz-a         ###   ########.fr       */
+/*   Created: 2026/04/05 01:23:36 by molasz-a          #+#    #+#             */
+/*   Updated: 2026/04/13 14:54:41 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <avr/io.h>
+#include <util/delay.h>
+
 int	main()
 {
+	DDRB |= (1 << PB0);
+	DDRD &= ~(1 << PD2);
+
+	while (1)
+	{
+		if (!(PIND & (1 << PD2)))
+		{
+			PORTB ^= (1 << PB0); // !PB0
+			_delay_ms(20);
+			while (!(PIND & (1 << PD2)));
+		}
+	}
+
 	return (0);
 }
