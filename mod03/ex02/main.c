@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:22:08 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/14 15:21:40 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/14 18:08:02 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,13 @@ void	init_rgb()
 	TCCR0B |= (1 << CS00);													// 14.9
 
 	TCCR2A |= (1 << WGM20) | (1 << WGM21) | (1 << COM2B1);					// PD3
-																			// 17.11
-	TCCR2B |= (1 << CS20);
+	TCCR2B |= (1 << CS20);													// 17.11
 }
 
 void	set_rgb(uint8_t r, uint8_t g, uint8_t b)
 {
-	OCR0A = r;
-	OCR0B = g;
+	OCR0A = g;
+	OCR0B = r;
 	OCR2B = b;
 }
 

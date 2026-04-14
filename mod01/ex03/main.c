@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:22:23 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/13 17:43:50 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/14 18:02:00 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,12 @@ int	main()
 
 	DDRB	|= (1 << PB1);
 	DDRD	&= ~((1 << PD2) | (1 << PD4));
+
 	TCCR1A	|= (1 << COM1A1) | (1 << WGM11);
 	TCCR1B	|= (1 << WGM12) | (1 << WGM13);
-	ICR1	= 15625 - 1;
+	ICR1	= 15625 - 1;					// 16M (F_CPU) / 1024 Prescalar
 	OCR1A	= ICR1 * duty / 10;
-	TCCR1B	|= (1 << CS12) | ( 1 << CS10);	// Prescalar 1024
+	TCCR1B	|= (1 << CS12) | ( 1 << CS10);	// Prescalar 1024 | Timer starts
 
 	pass = ICR1 / 10;
 	while (1)
@@ -41,7 +42,7 @@ int	main()
 			_delay_ms(200);
 			while (!(PIND & (1 << PD4)));
 		}
-		OCR1A = pass * duty;
+		OCR1A = pass * duty;				// Updates duty dynamically
 	}
 
 	return (0);
