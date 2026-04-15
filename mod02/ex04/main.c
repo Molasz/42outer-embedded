@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:01 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/13 19:12:54 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/15 13:15:22 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int	strcmp(const char *a, const char *b)
 
 int	validate_str(const char *str, char hide)
 {
-	char	buf[BUFF_SIZE];
+	char	buff[BUFF_SIZE];
 	char	c = 0;
 	int		i = 0;
 
@@ -78,14 +78,14 @@ int	validate_str(const char *str, char hide)
 		}
 		else if (c != '\r' && i < BUFF_SIZE - 1)
 		{
-			buf[i++] = c;
+			buff[i++] = c;
 			if (hide)
 				c = hide;
 			uart_tx(c);
 		}
 	}
-	buf[i] = '\0';
-	return (!strcmp(buf, str));
+	buff[i] = '\0';
+	return (!strcmp(buff, str));
 }
 
 void	blink_leds(uint8_t rg, char *str)
