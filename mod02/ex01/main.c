@@ -6,13 +6,12 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/13 18:47:51 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/15 19:27:20 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
-
 
 void uart_init()
 {
@@ -39,22 +38,24 @@ void	uart_printstr(const char *str)
 void timer_init()
 {
 	TCCR1B |= (1 << WGM12);
-	TIMSK1 |= (1 << OCIE1A);
+	TIMSK1 |= (1 << OCIE1A);		// Enable timer1 interruption 15.11.8
 	OCR1A = 15624 * 2;
 	TCCR1B |= (1 << CS12) | (1 << CS10);
 }
 
-ISR(TIMER1_COMPA_vect)
+void	__vector_11() __attribute__((section(".vector11"), signal, used));
+// Call __vector_11 when interruption 11 TIMER1 COMPA (11.1) is launched
+
+void	__vector_11()
 {
 	uart_printstr("Hello world!\r\n");
 }
 
 int	main()
 {
-	cli();
 	uart_init();
 	timer_init();
-	sei();
+	SREG |= (1 << SREG_I);			// Enable interruptions globaly
 
 	while (1) {}
 

@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:01 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/15 13:15:22 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/15 19:53:39 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ int	validate_str(const char *str, char hide)
 	return (!strcmp(buff, str));
 }
 
-void	blink_leds(uint8_t rg, char *str)
+void	blink_leds(uint8_t pin, char *str)
 {
 	int	i;
 
@@ -96,12 +96,12 @@ void	blink_leds(uint8_t rg, char *str)
 	uart_printstr(str);
 	while (i < 50)
 	{
-		PORTB ^= (1 << rg);
+		PORTB ^= (1 << pin);
 		_delay_ms(70);
 		i++;
 	}
 
-	PORTB &= ~(1 << rg);
+	PORTB &= ~(1 << pin);
 	uart_printstr("\r\n\r\n");
 }
 
@@ -109,7 +109,7 @@ int	main()
 {
 	int	r;
 
-	DDRB |= (1 << PB0);
+	DDRB |= (1 << DDB0) | (1 << DDB1);
 
 	uart_init();
 	while (1)
@@ -121,9 +121,9 @@ int	main()
 		r |= validate_str(PASS, '*');
 		uart_printstr("\r\n");
 		if (r)
-			blink_leds(PB1, "Bad combination username/password");
+			blink_leds(PORTB1, "Bad combination username/password");
 		else
-			blink_leds(PB0, "Welcome!");
+			blink_leds(PORTB0, "Welcome!");
 	}
 	return (0);
 }

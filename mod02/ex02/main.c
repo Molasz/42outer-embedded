@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:31 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/05 01:26:47 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/15 19:34:40 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@ void uart_init()
 
 char	uart_rx(void)
 {
-	while (!(UCSR0A & (1 << RXC0)));			// Wait until USART receive
-	return UDR0;
+	while (!(UCSR0A & (1 << RXC0)));			// Wait until USART RX receive
+	return UDR0;								// Read a char
 }
 
 void	uart_tx(char c)

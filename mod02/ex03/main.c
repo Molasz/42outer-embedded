@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:22 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/13 18:58:37 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/15 19:38:44 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void uart_init()
 {
 	UCSR0A |= (1 << U2X0);
 	UBRR0 = (F_CPU / (8UL * BAUD)) - 1;
-	UCSR0B |= (1 << TXEN0) | (1 << RXEN0) | (1 << RXCIE0); // Enable RX interruption
+	UCSR0B |= (1 << TXEN0) | (1 << RXEN0) | (1 << RXCIE0);	// Enable RX interruption
 	UCSR0C |= (1 << UCSZ00) | (1 << UCSZ01);
 }
 
@@ -36,16 +36,18 @@ char	update_case(char c)
 	return (c);
 }
 
-ISR(USART_RX_vect)
+void	__vector_18() __attribute__((section(".vector18"), signal, used));
+// Call __vector_18 when interruption 18 RX complete (11.1) is launched
+
+void __vector_18()
 {
-	uart_tx(update_case(UDR0));
+	uart_tx(update_case(UDR0));								// Reads from UDR0 directly
 }
 
 int	main()
 {
-	cli();
 	uart_init();
-	sei();
+	SREG |= (1 << SREG_I);
 
 	while (1) {}
 
