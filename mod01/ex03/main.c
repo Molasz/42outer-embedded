@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:22:23 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/14 18:02:00 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/15 16:35:08 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@ int	main()
 	int			duty = 5;
 	uint16_t	pass;
 
-	DDRB	|= (1 << PB1);
-	DDRD	&= ~((1 << PD2) | (1 << PD4));
+	DDRB	|= (1 << DDB1);
+	DDRD	&= ~((1 << DDD2) | (1 << DDD4));
 
 	TCCR1A	|= (1 << COM1A1) | (1 << WGM11);
 	TCCR1B	|= (1 << WGM12) | (1 << WGM13);
@@ -30,17 +30,19 @@ int	main()
 	pass = ICR1 / 10;
 	while (1)
 	{
-		if (duty < 10 && !(PIND & (1 << PD2)))
+		if (duty < 10 && !(PIND & (1 << PIND2)))
 		{
 			duty++;
-			_delay_ms(200);
-			while (!(PIND & (1 << PD2)));
+			_delay_ms(100);
+			while (!(PIND & (1 << PIND2)));
+			_delay_ms(100);
 		}
-        if (duty > 1 && !(PIND & (1 << PD4)))
+        if (duty > 1 && !(PIND & (1 << PIND4)))
 		{
 			duty--;
-			_delay_ms(200);
-			while (!(PIND & (1 << PD4)));
+			_delay_ms(100);
+			while (!(PIND & (1 << PIND4)));
+			_delay_ms(100);
 		}
 		OCR1A = pass * duty;				// Updates duty dynamically
 	}

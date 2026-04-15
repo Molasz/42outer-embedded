@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:22:12 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/14 17:34:46 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/15 16:32:12 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	main()
 {
-	DDRB |= (1 << PB1);			// 13.3.1 Alternate port function
+	DDRB |= (1 << DDB1);			// 13.3.1 Alternate port function
 								// 15.11 Timer/Counter
 	TCCR1A |= (1 << COM1A0);	// 15.2 Output mode | 0-1 Toggle PB1 on compare match
 	TCCR1B |= (1 << WGM12);		// CTC mode | When timer match OCR1A restarts

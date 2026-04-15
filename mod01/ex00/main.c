@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:22:08 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/14 17:03:32 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/15 16:32:38 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,13 @@ int	main()
 {
 	volatile long	n = 0;		// Volatile disable preprocessor optimizations on n
 
-	DDRB |= (1 << PB0);
+	DDRB |= (1 << DDB1);
 
 	while (1)
 	{
 		n = 400000;				// 16M (F_CPU) * 0.5s / ~20 (While instructions)
 		while(n-- > 0) {}
-		PORTB ^= (1 << PB0);	// Bitwise operation !PB0
+		PORTB ^= (1 << PORTB1);	// Bitwise operation !PB0
 	}
 
 	return (0);

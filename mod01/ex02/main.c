@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:22:18 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/14 18:00:03 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/15 16:33:20 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	main()
 {
-	DDRB	|= (1 << PB1);						// 15.11 Timer/Counter
+	DDRB	|= (1 << DDB1);						// 15.11 Timer/Counter
 	TCCR1A	|= (1 << COM1A1) | (1 << WGM11);	// 15.3 1-0 Toggle PB1 on compare match
 	TCCR1B	|= (1 << WGM12) | (1 << WGM13);		// 15.5 Fast PWM | When timer match ICR1 restarts
 	ICR1	= 62500 - 1;						// Compare register | 16M (F_CPU) / 256 (Prescaler)
