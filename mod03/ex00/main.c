@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:22:08 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/14 12:52:13 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/15 20:06:17 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,18 +25,18 @@ void	timer_init()
 
 void set_color(uint8_t pin)
 {
-	PORTD &= ~((1 << PD3) | (1 << PD5) | (1 << PD6));	// Off all
-	PORTD |= (1 << pin);								// On actual color
+	PORTD &= ~((1 << PORT3) | (1 << PORT5) | (1 << PORT6));	// Off all
+	PORTD |= (1 << pin);									// On actual color
 }
 
 void	update_rgb()
 {
 	if (!state)
-		set_color(PD5);
+		set_color(PORT5);
 	else if (state == 1)
-		set_color(PD6);
+		set_color(PORT6);
 	else
-		set_color(PD3);
+		set_color(PORT3);
 
 	if (state == 2)
 		state = 0;
@@ -44,18 +44,19 @@ void	update_rgb()
 		state++;
 }
 
-ISR(TIMER1_COMPA_vect)
+void	__vector_11() __attribute__((section(".vector11"), signal, used));
+
+void	__vector_11()
 {
 	update_rgb();
 }
 
 int	main()
 {
-	DDRD |= (1 << PD3) | (1 << PD5) | (1 << PD6);		// Blue Red Green
+	DDRD |= (1 << DDD3) | (1 << DDD5) | (1 << DDD6);		// Blue Red Green
 
-	cli();
 	timer_init();
-	sei();
+	SREG |= (1 << SREG_I);
 
 	while (1) {}
 

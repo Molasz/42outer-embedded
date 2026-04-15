@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:22:08 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/14 18:08:02 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/15 20:08:15 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 void	init_rgb()
 {
-	DDRD |= (1 << PD3) | (1 << PD5) | (1 << PD6);
+	DDRD |= (1 << DDD3) | (1 << DDD5) | (1 << DDD6);
 																			// 13.3 Alt port
 	TCCR0A |= (1 << WGM00) | (1 << WGM01) | (1 << COM0A1) | (1 << COM0B1);	// PD5 & PD6
 	TCCR0B |= (1 << CS00);													// 14.9
@@ -24,7 +24,7 @@ void	init_rgb()
 	TCCR2B |= (1 << CS20);													// 17.11
 }
 
-void	set_rgb(uint8_t r, uint8_t g, uint8_t b)
+void	set_rgb(uint8_t r, uint8_t g, uint8_t b) // Assign duty to each color
 {
 	OCR0A = g;
 	OCR0B = r;

@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:22:08 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/15 14:54:58 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/15 15:39:49 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,9 +105,16 @@ void	read_hex()
 	while (c != '\r')
 	{
 		c = uart_rx();
-		uart_tx(c);
-		if (c != '\r')
+		if (i && c == '\b')
+		{
+			i--;
+			uart_printstr("\b \b");
+		}
+		if ((!i && c == '#') || (i && (c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f')))
+		{
+			uart_tx(c);
 			buff[i++] = c;
+		}
 	}
 	uart_printstr("\r\n");
 	buff[i] = '\0';

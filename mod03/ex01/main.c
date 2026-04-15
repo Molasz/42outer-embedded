@@ -6,16 +6,16 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:22:08 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/14 13:06:01 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/15 20:05:54 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-#define RED (1 << PD6)
-#define GREEN (1 << PD5)
-#define BLUE (1 << PD3)
+#define RED (1 << PORTD6)
+#define GREEN (1 << PORTD5)
+#define BLUE (1 << PORTD3)
 #define YELLOW (RED | GREEN)
 #define CYAN (GREEN | BLUE)
 #define MAGENTA (RED | BLUE)
@@ -35,7 +35,7 @@ void	timer_init()
 
 void	update_rgb()
 {
-	PORTD &= ~((1 << PD3) | (1 << PD5) | (1 << PD6));	// Off all
+	PORTD &= ~((1 << PD3) | (1 << PD5) | (1 << PD6));
 	PORTD |= colors[state];								// On actual color
 
 	if (state == 6)
@@ -44,18 +44,19 @@ void	update_rgb()
 		state++;
 }
 
-ISR(TIMER1_COMPA_vect)
+void	__vector_11() __attribute__((section(".vector11"), signal, used));
+
+void	__vector_11()
 {
 	update_rgb();
 }
 
 int	main()
 {
-	DDRD |= (1 << PD3) | (1 << PD5) | (1 << PD6);		// Blue Red Green
+	DDRD |= (1 << DDD3) | (1 << DDD5) | (1 << DDD6);
 
-	cli();
 	timer_init();
-	sei();
+	SREG |= (1 << SREG_I);
 
 	while (1) {}
 
