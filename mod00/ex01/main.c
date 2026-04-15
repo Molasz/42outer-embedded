@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:23:25 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/13 14:40:32 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/15 15:58:04 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 int	main()
 {
-	DDRB |= (1 << PB0); // READ / WRITE
+	DDRB |= (1 << DDB0); // READ / WRITE
 
-	PORTB |= (1 << PB0); // ON / OFF
+	PORTB |= (1 << PORTB0); // ON / OFF
 
 	while (1) {}
 

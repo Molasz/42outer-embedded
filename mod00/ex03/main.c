@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:23:36 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/13 14:57:18 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/15 16:26:08 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,17 @@
 
 int	main()
 {
-	DDRB |= (1 << PB0);
-	DDRD &= ~(1 << PD2);
+	DDRB |= (1 << DDB0);
+	DDRD &= ~(1 << DDD2);
 
 	while (1)
 	{
-		if (!(PIND & (1 << PD2)))
+		if (!(PIND & (1 << PIND2)))
 		{
-			PORTB ^= (1 << PB0); // !PB0
+			PORTB ^= (1 << PORTB0);			// !PB0
 			_delay_ms(200);
-			while (!(PIND & (1 << PD2)));
+			while (!(PIND & (1 << PIND2)));
+			_delay_ms(200);
 		}
 	}
 

@@ -6,23 +6,23 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:23:20 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/13 14:50:52 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/15 16:22:58 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <avr/io.h>
 
 int	main()
-{							// 13.2.3
-	DDRB |= (1 << PB0);		// Write 1
-	DDRD &= ~(1 << PD2);	// Read 0
+{										// 13.2.3
+	DDRB |= (1 << DDB0);				// Write 1
+	DDRD &= ~(1 << DDD2);				// Read 0
 	
 	while (1)
 	{
-		if (PIND & (1 << PD2))
-			PORTB &= ~(1 << PB0); // OFF 0
+		if (PIND & (1 << PIND2))
+			PORTB &= ~(1 << PORTB0);	// OFF 0
 		else
-			PORTB |= (1 << PB0); // ON 1
+			PORTB |= (1 << PORTB0);		// ON 1
 	}
 
 	return (0);
