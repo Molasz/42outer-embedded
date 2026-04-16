@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:44 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/15 20:25:23 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/16 11:32:12 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void uart_init()
 												// Each n cycles send data | 16M / (8 / 115200) = 16,...
 	UCSR0B |= (1 << TXEN0);						// Enable USART
 	UCSR0C |= (1 << UCSZ00) | (1 << UCSZ01);	// 8 bits           8
-	UCSROC &= ~((1 << UPM00) | (1 << UPM01));	// Parity disabled  N
+	UCSR0C &= ~((1 << UPM00) | (1 << UPM01));	// Parity disabled  N
 	UCSR0C &= ~(1 << USBS0);					// 1-bit stop       1
 }
 
