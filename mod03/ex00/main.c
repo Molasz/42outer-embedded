@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:22:08 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/15 20:06:17 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/16 12:07:10 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,11 @@ void set_color(uint8_t pin)
 void	update_rgb()
 {
 	if (!state)
-		set_color(PORT5);
+		set_color(PORT5);									// Red
 	else if (state == 1)
-		set_color(PORT6);
+		set_color(PORT6);									// Green
 	else
-		set_color(PORT3);
+		set_color(PORT3);									// Blue
 
 	if (state == 2)
 		state = 0;

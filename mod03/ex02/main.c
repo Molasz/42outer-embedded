@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:22:08 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/15 20:08:15 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/16 12:21:22 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,9 @@ void	init_rgb()
 
 void	set_rgb(uint8_t r, uint8_t g, uint8_t b) // Assign duty to each color
 {
-	OCR0A = g;
-	OCR0B = r;
-	OCR2B = b;
+	OCR0A = g; // Timer0 A
+	OCR0B = r; // Timer0 B
+	OCR2B = b; // Timer2 B
 }
 
 void	wheel(uint8_t pos)

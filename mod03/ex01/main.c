@@ -6,15 +6,16 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:22:08 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/15 20:05:54 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/16 12:11:51 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-#define RED (1 << PORTD6)
-#define GREEN (1 << PORTD5)
+// COLORS
+#define RED (1 << PORTD5)
+#define GREEN (1 << PORTD6)
 #define BLUE (1 << PORTD3)
 #define YELLOW (RED | GREEN)
 #define CYAN (GREEN | BLUE)
@@ -23,6 +24,7 @@
 
 uint8_t	state = 0;
 
+// Color sequence
 const uint8_t colors[] = { RED, GREEN, BLUE, YELLOW, CYAN, MAGENTA, WHITE};
 
 void	timer_init()

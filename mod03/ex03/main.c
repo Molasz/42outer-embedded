@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:22:08 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/16 11:58:09 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/16 12:28:46 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,8 +102,9 @@ void	read_hex()
 	uart_printstr("\r\n");
 	buff[i] = '\0';
 	if (i < 7)
-		return;
-	set_rgb(buff + 1);
+		uart_printstr("Bad format\r\n");
+	else
+		set_rgb(buff + 1);
 }
 
 int	main()
@@ -113,9 +114,7 @@ int	main()
 	uart_init();
 
 	while (1)
-	{
 		read_hex();
-	}
 
 	return (0);
 }
