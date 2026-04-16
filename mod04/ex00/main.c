@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/16 13:08:48 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/16 20:07:59 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,13 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
-void	__vector_1() __attribute__((section(".vector1"), signal, used));
-// Call __vector_1 when interruption 1 INT0 (11.1) is launched
+void	INT0_vect() __attribute__((signal));
+// Call INT0_vect when interruption INT0 (11.1) is launched
 
-void	__vector_1()
+void	INT0_vect()
 {
 	PORTB ^= (1 << PORTB0);
-	_delay_ms(20);
+	_delay_ms(200);
 	EIFR = (1 << INTF0);			// Clear interrupt flag | Set 1 to INT0 flag and 0 to all others
 }
 

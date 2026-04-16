@@ -5,57 +5,53 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/04/05 01:22:08 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/16 16:17:19 by molasz-a         ###   ########.fr       */
+/*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
+/*   Updated: 2026/04/16 20:08:28 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <util/delay.h>
 
-uint8_t	state = 0;
+volatile int8_t	n = 0;
 
-void	timer_init()
+void	update_leds()
 {
-	TCCR1B |= (1 << WGM12);
-	TIMSK1 |= (1 << OCIE1A);
-	OCR1A = 15624;
-	TCCR1B |= (1 << CS12) | (1 << CS10);
+	PORTB = (PORTB & 0xE8) | (n & 0x07) | ((n & 0x08) << 1);
 }
 
-void set_color(uint8_t pin)
+void	INT0_vect() __attribute__((signal));
+
+void	INT0_vect()
 {
-	PORTD &= ~((1 << PORT3) | (1 << PORT5) | (1 << PORT6));	// Off all
-	PORTD |= (1 << pin);									// On actual color
+	n++;
+	update_leds();
+	_delay_ms(200);
+	EIFR = (1 << INTF0);
 }
 
-void	update_rgb()
+void	PCINT2_vect() __attribute__((signal));
+
+void	PCINT2_vect()
 {
-	if (!state)
-		set_color(PORT5);									// Red
-	else if (state == 1)
-		set_color(PORT6);									// Green
-	else
-		set_color(PORT3);									// Blue
-
-	if (state == 2)
-		state = 0;
-	else
-		state++;
-}
-
-void	__vector_11() __attribute__((section(".vector11"), signal, used));
-
-void	__vector_11()
-{
-	update_rgb();
+	if (!(PIND & (1 << PIND4)))
+	{
+		n--;
+		update_leds();
+		_delay_ms(200);
+	}
+	PCIFR = (1 << PCIF2);
 }
 
 int	main()
 {
-	DDRD |= (1 << DDD3) | (1 << DDD5) | (1 << DDD6);		// Blue Red Green
+	DDRB |= (1 << DDB0) | (1 << DDB1) | (1 << DDB2) | (1 << DDB4);
 
-	timer_init();
+	EICRA |= (1 << ISC01);
+	EIMSK |= (1 << INT0);
+	PCICR |= (1 << PCIE2);		// Enable intruptions for all PD changes
+	PCMSK2 |= (1 << PCINT20);	// Only allow PD4 to launch PCINT2 interruption
 	SREG |= (1 << SREG_I);
 
 	while (1) {}
