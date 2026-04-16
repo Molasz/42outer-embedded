@@ -6,12 +6,11 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:22:08 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/15 15:39:49 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/16 11:58:09 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <avr/io.h>
-#include <util/delay.h>
 
 #define BUFF_SIZE 8
 
@@ -55,22 +54,6 @@ void	uart_printstr(const char *str)
 		uart_tx(str[i++]);
 }
 
-int	validate_hex(char	*hex)
-{
-	int	i = 1;
-
-	if (hex[0] != '#') return (1);
-	while (hex[i])
-	{
-		if (!((hex[i] >= '0' && hex[i] <= '9') ||
-			(hex[i] >= 'A' && hex[i] <= 'F') ||
-			(hex[i] >= 'a' && hex[i] <= 'f')))
-			return (1);
-		i++;
-	}
-	return (0);
-}
-
 uint8_t	char_hex(char c)
 {
 	if (c >= '0' && c <= '9')
@@ -102,15 +85,15 @@ void	read_hex()
 	char	c = 0;
 	char	i = 0;
 
-	while (c != '\r')
+	while (c != '\r' && i < 7)
 	{
 		c = uart_rx();
-		if (i && c == '\b')
+		if (i && (c == '\b' || c == 127))
 		{
 			i--;
 			uart_printstr("\b \b");
 		}
-		if ((!i && c == '#') || (i && (c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f')))
+		if ((!i && c == '#') || (i && ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f'))))
 		{
 			uart_tx(c);
 			buff[i++] = c;
@@ -118,7 +101,7 @@ void	read_hex()
 	}
 	uart_printstr("\r\n");
 	buff[i] = '\0';
-	if (i < 7 || validate_hex(buff))
+	if (i < 7)
 		return;
 	set_rgb(buff + 1);
 }
