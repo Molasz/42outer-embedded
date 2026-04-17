@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/17 19:02:53 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/17 15:10:10 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,10 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
-#define TS_OFFSET 324
-#define TS_GAIN 1
+const char	*hex = "0123456789abcdef";
+
+volatile uint8_t	state = 0;
+char				buff[3] = "  \0";
 
 void uart_init()
 {
@@ -39,11 +41,11 @@ void	uart_printstr(const char *str)
 		uart_tx(str[i++]);
 }
 
-void	uart_putnbr(uint16_t nb)
+char	*int_hex(uint8_t n)
 {
-	if (nb >= 10)
-		uart_putnbr(nb / 10);
-	uart_tx((nb % 10) + '0');
+	buff[1] = hex[n % 16];
+	buff[0] = hex[n / 16];
+	return (buff);
 }
 
 void timer_init()
@@ -58,6 +60,7 @@ void	TIMER1_COMPA_vect() __attribute__((signal));
 
 void	TIMER1_COMPA_vect()
 {
+	ADMUX &= ~((1 << MUX1) | (1 << MUX0));	// Input channel ADC0
 	ADCSRA |= (1 << ADSC);
 }
 
@@ -65,19 +68,36 @@ void	ADC_vect() __attribute__((signal));
 
 void	ADC_vect()
 {
-	uint16_t	n;
+	if (!state)								// Setup next ADC
+	{
+		ADMUX |= (1 << MUX0);				// Input channel ADC1
+	}
+	else if (state == 1)
+	{
+		ADMUX |= (1 << MUX1);				// Input channel ADC2
+		ADMUX &= ~(1 << MUX0);
+	}
 
-	n = ADCL;
-	n |= (ADCH << 8);
-	uart_putnbr((n - TS_OFFSET) / TS_GAIN);								// Convert to celsius
-	uart_printstr("\r\n");
+	uart_printstr(int_hex(ADCH));
+	if (state < 2)
+	{
+		uart_printstr(", ");
+		ADCSRA |= (1 << ADSC);
+		state++;
+	}
+	else
+	{
+		uart_printstr("\r\n");
+		state = 0;
+	}
 }
 
 int	main()
-{
-	ADMUX |= (1 << REFS0) | (1 << REFS1) | (1 << MUX3);					// 1.1v reference (23.8) | ADC8 Temperature [269 - 480]
+{																		// ADC 23.9
+	ADMUX |= (1 << REFS0) | (1 << ADLAR);								// 0 - 1 AVCC max reference (23-3) | Align left
 
-	ADCSRA |= (1 << ADEN) | (1 << ADIE) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
+	ADCSRA |= (1 << ADEN) | (1 << ADIE);								// Enable ADC & ADC interrupt
+	ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);				// 128 prescaler
 
 	uart_init();
 	timer_init();
