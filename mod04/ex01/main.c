@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/16 18:28:26 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/17 12:21:18 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	init_timers()
 	TIMSK0 |= (1 << OCIE0A);
 	TCCR0B |= (1 << CS02) | (1 << CS00);
 
-	TCCR1A |= (1 << COM1A1) | (1 << WGM10);
+	TCCR1A |= (1 << COM1A1) | (1 << WGM10);	// Fast PWM Top 255
 	TCCR1B |= (1 << WGM12);
 	TCCR1B |= (1 << CS10);
 }
@@ -48,7 +48,7 @@ int	main()
 	DDRB |= (1 << DDB1);
 
 	init_timers();
-	SREG |= (1 << SREG_I);			// Enable interruptions globaly
+	SREG |= (1 << SREG_I);
 
 	while (1) {}
 

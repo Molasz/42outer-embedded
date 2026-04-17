@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/16 20:07:59 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/17 12:16:57 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,9 @@ void	INT0_vect()
 int	main()
 {
 	DDRB |= (1 << DDB0);
-	DDRD &= ~(1 << DDD2);
-	EICRA |= (1 << ISC01);			// Launch INT0 interrupt when PD2 detects low
-	EIMSK |= (1 << INT0);			// Enable INT0 interrupt
+	DDRD &= ~(1 << DDD2);			// External interrupts (12.2)
+	EICRA |= (1 << ISC01);			// Launch INT0 interrupt when PD2 detects low (12.2.1)
+	EIMSK |= (1 << INT0);			// Enable INT0 interrupt (12.2.2)
 	SREG |= (1 << SREG_I);			// Enable interruptions globaly
 
 	while (1) {}
