@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/17 19:02:53 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/18 11:11:52 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,9 @@
 
 #define TS_OFFSET 324
 #define TS_GAIN 1
+
+volatile uint8_t	flag = 0;
+volatile uint16_t	n = 0;
 
 void uart_init()
 {
@@ -49,41 +52,43 @@ void	uart_putnbr(uint16_t nb)
 void timer_init()
 {
 	TCCR1B |= (1 << WGM12);
-	TIMSK1 |= (1 << OCIE1A);
 	OCR1A = 312;
+	OCR1B = 312;
 	TCCR1B |= (1 << CS12) | (1 << CS10);
-}
-
-void	TIMER1_COMPA_vect() __attribute__((signal));
-
-void	TIMER1_COMPA_vect()
-{
-	ADCSRA |= (1 << ADSC);
 }
 
 void	ADC_vect() __attribute__((signal));
 
 void	ADC_vect()
 {
-	uint16_t	n;
-
-	n = ADCL;
-	n |= (ADCH << 8);
-	uart_putnbr((n - TS_OFFSET) / TS_GAIN);								// Convert to celsius
-	uart_printstr("\r\n");
+	if (!flag)
+	{
+		n = ADCL;
+		n |= (ADCH << 8);
+		flag = 1;
+	}
+	TIFR1 |= (1 << OCF1B);
 }
 
 int	main()
 {
-	ADMUX |= (1 << REFS0) | (1 << REFS1) | (1 << MUX3);					// 1.1v reference (23.8) | ADC8 Temperature [269 - 480]
-
-	ADCSRA |= (1 << ADEN) | (1 << ADIE) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
+	ADMUX |= (1 << REFS0) | (1 << REFS1) | (1 << MUX3);					// 1.1v reference (23.8) | ADC8 Temperature
+	ADCSRA |= (1 << ADEN) | (1 << ADIE) | (1 << ADATE) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
+	ADCSRB |= (1 << ADTS2) | (1 << ADTS0);
 
 	uart_init();
 	timer_init();
 	SREG |= (1 << SREG_I);
 
-	while (1) {}
+	while (1)
+	{
+		if (flag)
+		{
+			uart_putnbr(((uint16_t) n - TS_OFFSET) / TS_GAIN);			// Convert to celsius
+			uart_printstr("\r\n");
+			flag = 0;
+		}
+	}
 
 	return (0);
 }

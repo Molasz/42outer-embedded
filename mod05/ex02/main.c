@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/17 15:30:45 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/18 11:06:48 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
+volatile uint8_t	flag = 0;
+volatile uint16_t	n = 0;
 volatile uint8_t	state = 0;
 char				buff[5] = "    \0";
 
@@ -49,62 +51,54 @@ void	uart_putnbr(uint16_t nb)
 void timer_init()
 {
 	TCCR1B |= (1 << WGM12);
-	TIMSK1 |= (1 << OCIE1A);
 	OCR1A = 312;
+	OCR1B = 312;
 	TCCR1B |= (1 << CS12) | (1 << CS10);
-}
-
-void	TIMER1_COMPA_vect() __attribute__((signal));
-
-void	TIMER1_COMPA_vect()
-{
-	ADMUX &= ~((1 << MUX1) | (1 << MUX0));	// Input channel ADC0
-	ADCSRA |= (1 << ADSC);
 }
 
 void	ADC_vect() __attribute__((signal));
 
 void	ADC_vect()
 {
-	uint16_t	n = 0;
-
-	if (!state)								// Setup next ADC
+	if (!flag)
 	{
-		ADMUX |= (1 << MUX0);				// Input channel ADC1
+		n = ADCL;
+		n |= (ADCH << 8);
+		flag = 1;
 	}
-	else if (state == 1)
-	{
-		ADMUX |= (1 << MUX1);				// Input channel ADC2
-		ADMUX &= ~(1 << MUX0);
-	}
-
-	n = ADCL;								// Reads ADC low
-	n |= ((uint16_t) ADCH << 8);			// Reads ADC high
-	uart_putnbr(n);
-	if (state < 2)
-	{
-		uart_printstr(", ");
-		ADCSRA |= (1 << ADSC);
-		state++;
-	}
-	else
-	{
-		uart_printstr("\r\n");
-		state = 0;
-	}
+	TIFR1 |= (1 << OCF1B);
 }
 
 int	main()
 {
 	ADMUX |= (1 << REFS0);
-	ADCSRA |= (1 << ADEN) | (1 << ADIE);
-	ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
+	ADCSRA |= (1 << ADEN) | (1 << ADIE) | (1 << ADATE) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
+	ADCSRB |= (1 << ADTS2) | (1 << ADTS0);
 
 	uart_init();
 	timer_init();
 	SREG |= (1 << SREG_I);
 
-	while (1) {}
+	while (1)
+	{
+		if (flag)
+		{
+			uart_putnbr(n);
+			if (state < 2)
+			{
+				uart_printstr(", ");
+				state++;
+			}
+			else
+			{
+				uart_printstr("\r\n");
+				state = 0;
+			}
+
+			ADMUX = (ADMUX & 0xF0) | state;				// (ADMUX & 11110000) | 00000001 (ex 1)
+			flag = 0;
+		}
+	}
 
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/17 21:23:09 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/18 10:57:13 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,9 @@
 
 const char	*hex = "0123456789abcdef";
 char		buff[3] = "  \0";
+
+volatile uint8_t	n;
+volatile uint8_t	flag = 0;
 
 void uart_init()
 {
@@ -49,8 +52,8 @@ char	*int_hex(uint8_t n)
 void timer_init()
 {
 	TCCR1B |= (1 << WGM12);
-	OCR1A = 312;
-	OCR1B = 312;
+	OCR1A = 312;														// Timer top
+	OCR1B = 312;														// ADC trigger
 	TCCR1B |= (1 << CS12) | (1 << CS10);
 }
 
@@ -58,8 +61,11 @@ void	ADC_vect() __attribute__((signal));
 
 void	ADC_vect()
 {
-	uart_printstr(int_hex(ADCH));
-	uart_printstr("\r\n");
+	if (!flag)
+	{
+		n = ADCH;
+		flag = 1;
+	}
 	TIFR1 |= (1 << OCF1B);												// Clear timer flag
 }
 
@@ -77,7 +83,15 @@ int	main()
 	timer_init();
 	SREG |= (1 << SREG_I);
 
-	while (1) {}
+	while (1)
+	{
+		if (flag)
+		{
+			uart_printstr(int_hex(n));
+			uart_printstr("\r\n");
+			flag = 0;
+		}
+	}
 
 	return (0);
 }
