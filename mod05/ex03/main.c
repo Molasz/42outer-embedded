@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/18 11:11:52 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/20 12:15:00 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ void	ADC_vect()
 
 int	main()
 {
-	ADMUX |= (1 << REFS0) | (1 << REFS1) | (1 << MUX3);					// 1.1v reference (23.8) | ADC8 Temperature
+	ADMUX |= (1 << REFS0) | (1 << REFS1) | (1 << MUX3);		// 1.1v reference (23.8) | ADC8 Temperature
 	ADCSRA |= (1 << ADEN) | (1 << ADIE) | (1 << ADATE) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
 	ADCSRB |= (1 << ADTS2) | (1 << ADTS0);
 
@@ -84,7 +84,7 @@ int	main()
 	{
 		if (flag)
 		{
-			uart_putnbr(((uint16_t) n - TS_OFFSET) / TS_GAIN);			// Convert to celsius
+			uart_putnbr((n - TS_OFFSET) / TS_GAIN);			// Convert to celsius
 			uart_printstr("\r\n");
 			flag = 0;
 		}

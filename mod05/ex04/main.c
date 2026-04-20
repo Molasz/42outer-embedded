@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/17 20:58:19 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/20 12:16:39 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ int	main()
 	adc_init();
 	
 	SREG |= (1 << SREG_I);
-	ADCSRA |= (1 << ADSC);										// Starts first conversion
+	ADCSRA |= (1 << ADSC);										// Starts first ADC conversion
 
 	while (1)
 	{

@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/18 10:57:13 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/20 12:10:00 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ int	main()
 	ADMUX |= (1 << REFS0) | (1 << ADLAR);								// 0 - 1 AVCC max reference (23-3) | Align left
 
 	ADCSRA |= (1 << ADEN) | (1 << ADIE) | (1 << ADATE);					// Enable ADC | ADC interrupt | Enable Auto trigger (23-6)
-	ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);				// 128 prescaler
+	ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);				// 128 prescaler | 16M / 128 = 125k [50k ~ 200k]
 
 	ADCSRB |= (1 << ADTS2) | (1 << ADTS0);								// Trigger ADC conversion on timer match
 
