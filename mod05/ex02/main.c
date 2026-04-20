@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/18 11:06:48 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/20 16:28:16 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,6 @@ void	ADC_vect()
 		n |= (ADCH << 8);
 		flag = 1;
 	}
-	TIFR1 |= (1 << OCF1B);
 }
 
 int	main()
@@ -97,6 +96,10 @@ int	main()
 
 			ADMUX = (ADMUX & 0xF0) | state;				// (ADMUX & 11110000) | 00000001 (ex 1)
 			flag = 0;
+			if (state > 0)
+				ADCSRA |= (1 << ADSC);
+			else
+				TIFR1 |= (1 << OCF1B);
 		}
 	}
 
