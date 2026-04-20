@@ -6,20 +6,17 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/20 20:24:23 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/20 20:22:27 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <avr/io.h>
-#include <avr/interrupt.h>
-#include <util/delay.h>
+#include <util/twi.h>
+
+// 2-wire Serial Interface (21)
 
 const char	*hex = "0123456789abcdef";
-
-volatile uint8_t	flag = 0;
-volatile uint8_t	n = 0;
-volatile uint8_t	state = 0;
-char				buff[3] = "  \0";
+char	buff[3] = "  \0";
 
 void uart_init()
 {
@@ -50,58 +47,51 @@ char	*int_hex(uint8_t n)
 	return (buff);
 }
 
-void timer_init()
+void	i2c_init()
 {
-	TCCR1B |= (1 << WGM12);
-	OCR1A = 312;
-	OCR1B = 312;
-	TCCR1B |= (1 << CS12) | (1 << CS10);
+	TWSR &= ~((1 << TWPS1) | (1 << TWPS0));				// Prescaler 1
+	TWBR = 72;											// 16M / (16 + (2 * TWBR) * prescaler) = 100k (21.5.2)
+	TWCR |= (1 << TWEN);								// Enable IC2
 }
 
-void	ADC_vect() __attribute__((signal));
-
-void	ADC_vect()
+void	i2c_start()
 {
-	if (!flag)
-	{
-		n = ADCH;
-		flag = 1;
-	}
+	TWCR = (1 << TWEN) | (1 << TWSTA) | (1 << TWINT);	// START condition | Clear flag, say to IC2 can start next operation
+	while (!(TWCR & (1 << TWINT)));						// Wait until IC2 end operation
+}
+
+void	i2c_stop()
+{
+	TWCR = (1 << TWEN) | (1 << TWSTO) | (1 << TWINT);	// STOP condition | Clear flag
+	while (TWCR & (1 << TWSTO));						// Wait until STOP complete
+}
+
+void	i2c_print_status()
+{
+	uart_printstr("0x");
+	uart_printstr(int_hex(TWSR & 0xF8));
+	uart_printstr("\r\n");
+}
+
+void	i2c_ping(uint8_t addr)
+{
+	TWDR = (addr << 1) | 0;								// Sensor addres + R/W
+	TWCR = (1 << TWEN) | (1 << TWINT);					// Clear flag
+	while (!(TWCR & (1 << TWINT)));						// Wait until IC2 end operation
 }
 
 int	main()
 {
-	ADMUX |= (1 << REFS0) | (1 << ADLAR);
-	ADCSRA |= (1 << ADEN) | (1 << ADIE) | (1 << ADATE) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
-	ADCSRB |= (1 << ADTS2) | (1 << ADTS0);
-
+	i2c_init();
 	uart_init();
-	timer_init();
-	SREG |= (1 << SREG_I);
 
 	while (1)
 	{
-		if (flag)
-		{
-			uart_printstr(int_hex(n));
-			if (state < 2)
-			{
-				uart_printstr(", ");
-				state++;
-			}
-			else
-			{
-				uart_printstr("\r\n");
-				state = 0;
-			}
-
-			ADMUX = (ADMUX & 0xF0) | state;				// (ADMUX & 11110000) | 00000001 (ex 1)
-			flag = 0;
-			if (state > 0)
-				ADCSRA |= (1 << ADSC);
-			else
-				TIFR1 |= (1 << OCF1B);
-		}
+		i2c_start();
+		i2c_print_status();
+		i2c_ping(0x38);									// AHT20 address
+		i2c_print_status();
+		i2c_stop();
 	}
 
 	return (0);
