@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/21 18:14:48 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/21 20:37:42 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 uint8_t	last_read = 0;
 uint8_t	last_status = 0;
 uint8_t	last_data = 0;
-uint8_t	data[7];
+uint8_t	data[5];
 
 void uart_init()
 {
@@ -48,6 +48,13 @@ void uart_printhex(uint8_t n)
 {
 	uart_tx(HEX[n / 16]);
 	uart_tx(HEX[n % 16]);
+}
+
+void	uart_putnbr(uint32_t nb)
+{
+	if (nb >= 10)
+		uart_putnbr(nb / 10);
+	uart_tx((nb % 10) + '0');
 }
 
 void	i2c_status(uint8_t data, char *str)
@@ -112,16 +119,35 @@ void	i2c_read()
 
 void	print_data()
 {
-	uint8_t	i = 0;
+	uint32_t	temp, hum;
+	int32_t		temp_fix;
 
-	data[6] = c;
-	while (i < 7)
+	hum = ((uint32_t)data[0] << 12) | ((uint32_t)data[1] << 4) | (data[2] >> 4);
+	temp = (((uint32_t)data[2] & 0x0F) << 16) | ((uint32_t)data[3] << 8) | (data[4]);
+
+	hum = (uint32_t)(((uint64_t) hum * 10000) >> 20);
+	temp_fix = (int32_t)(((uint64_t)temp * 20000) >> 20) - 5000;
+
+	uart_printstr("Temperature: ");
+	if (temp_fix < 0)
 	{
-		uart_printhex(data[i]);
-		uart_printstr(" ");
-		i++;
+		uart_tx('-');
+		temp_fix = -temp_fix;
 	}
-	uart_printstr("\r\n");
+	uart_putnbr(temp_fix / 100);
+	uart_tx('.');
+	temp_fix %= 100;
+	if (temp_fix < 10)
+		uart_tx('0');
+	uart_putnbr(temp_fix);
+	uart_printstr("C, Humidity: ");
+	uart_putnbr(hum / 100);
+	uart_tx('.');
+	hum %= 100;
+	if (hum < 10)
+		uart_tx('0');
+	uart_putnbr(hum);
+	uart_printstr("%\r\n");
 }
 
 uint8_t	i2c_validate_status(uint8_t exp)
@@ -136,27 +162,27 @@ uint8_t	i2c_aht20_init()
 	if (DEBUG)
 		uart_printstr("AHT20 init\r\n");
 	i2c_start();
-	if (i2c_validate_status(0x08)) return (1);
+	if (i2c_validate_status(TW_START)) return (1);
 	i2c_write(0x38 << 1 | 1);							// Read
-	if (i2c_validate_status(0x40)) return (1);
+	if (i2c_validate_status(TW_MR_SLA_ACK)) return (1);
 	last_read = 1;
 	i2c_read();
-	if (i2c_validate_status(0x58)) return (1);
+	if (i2c_validate_status(TW_MR_DATA_NACK)) return (1);
 	if (!(last_data & (1 << 3)))						// 3rd bit 0? Calibrate
 	{
 		if (DEBUG)
 			uart_printstr("Start calibration\r\n");
 		i2c_stop();
 		i2c_start();
-		if (i2c_validate_status(0x08)) return (1);
+		if (i2c_validate_status(TW_START)) return (1);
 		i2c_write(0x38 << 1);							// Write
-		if (i2c_validate_status(0x18)) return (1);
+		if (i2c_validate_status(TW_MT_SLA_ACK)) return (1);
 		i2c_write(0xBE);								// Calibration command
-		if (i2c_validate_status(0x28)) return (1);
+		if (i2c_validate_status(TW_MT_DATA_ACK)) return (1);
 		i2c_write(0x08);
-		if (i2c_validate_status(0x28)) return (1);
+		if (i2c_validate_status(TW_MT_DATA_ACK)) return (1);
 		i2c_write(0x00);
-		if (i2c_validate_status(0x28)) return (1);
+		if (i2c_validate_status(TW_MT_DATA_ACK)) return (1);
 		_delay_ms(10);
 		if (DEBUG)
 			uart_printstr("End calibration\r\n");
@@ -172,42 +198,40 @@ uint8_t	i2c_aht20_measurement()
 	if (DEBUG)
 		uart_printstr("\r\nStart measurement\r\n");
 	i2c_start();
-	if (i2c_validate_status(0x08)) return (1);
+	if (i2c_validate_status(TW_START)) return (1);
 	i2c_write(0x38 << 1);								// Write
-	if (i2c_validate_status(0x18)) return (1);
+	if (i2c_validate_status(TW_MT_SLA_ACK)) return (1);
 	i2c_write(0xAC);									// Measurement command
-	if (i2c_validate_status(0x28)) return (1);
+	if (i2c_validate_status(TW_MT_DATA_ACK)) return (1);
 	i2c_write(0x33);
-	if (i2c_validate_status(0x28)) return (1);
+	if (i2c_validate_status(TW_MT_DATA_ACK)) return (1);
 	i2c_write(0x00);
-	if (i2c_validate_status(0x28)) return (1);
+	if (i2c_validate_status(TW_MT_DATA_ACK)) return (1);
 	i2c_stop();
 	_delay_ms(80);
 	i2c_start();
-	if (i2c_validate_status(0x08)) return (1);
+	if (i2c_validate_status(TW_START)) return (1);
 	i2c_write(0x38 << 1 | 1);							// Read
-	if (i2c_validate_status(0x40)) return (1);
-	last_data = 1;
-	while (last_data & (1 << 7))						// Wait until measurement is ready
+	if (i2c_validate_status(TW_MR_SLA_ACK)) return (1);
+	last_read = 0;
+	do
 	{
 		i2c_read();
-		if (i2c_validate_status(0x50)) return (1);
-		data[0] = last_data;
+		if (i2c_validate_status(TW_MR_DATA_ACK)) return (1);
 		_delay_ms(10);
 	}
+	while (last_data & (1 << 7));						// Wait until measurement is ready
 	i = 0;
-	last_read = 0;
 	while (i < 5)										// Read all bytes
 	{
 		i2c_read();
-		if (i2c_validate_status(0x50)) return (1);
-		data[i + 1] = last_data;
+		if (i2c_validate_status(TW_MR_DATA_ACK)) return (1);
+		data[i] = last_data;
 		i++;
 	}
 	last_read = 1;
 	i2c_read();
-	if (i2c_validate_status(0x58)) return (1);
-	data[6] = last_data;
+	if (i2c_validate_status(TW_MR_DATA_NACK)) return (1);
 	print_data();
 	i2c_stop();
 	return (0);
@@ -224,7 +248,7 @@ int	main()
 	while (i2c_aht20_init())							// Validate AHT20 calibration
 	{
 		i2c_stop();
-		uart_printstr("AHT20 init error | Retrying in 1s");
+		uart_printstr("AHT20 init error | Retrying in 1s\r\n");
 		_delay_ms(1000);
 	}
 
@@ -232,7 +256,7 @@ int	main()
 	{
 		if (i2c_aht20_measurement())					// AHT20 measurement
 		{
-			uart_printstr("AHT20 measurement error | Retrying in 2s");
+			uart_printstr("AHT20 measurement error | Retrying in 2s\r\n");
 			i2c_stop();
 		}
 		_delay_ms(2000);

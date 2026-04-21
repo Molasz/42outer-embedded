@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/21 17:53:48 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/21 20:37:30 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,16 +187,16 @@ uint8_t	i2c_aht20_measurement()
 	if (i2c_validate_status(0x08)) return (1);
 	i2c_write(0x38 << 1 | 1);							// Read
 	if (i2c_validate_status(0x40)) return (1);
-	last_data = 0;
-	while (last_data & (1 << 7))						// Wait until measurement is ready
+	last_read = 0;
+	do
 	{
-		_delay_ms(10);
 		i2c_read();
 		if (i2c_validate_status(0x50)) return (1);
 		data[0] = last_data;
+		_delay_ms(10);
 	}
+	while (last_data & (1 << 7));						// Wait until measurement is ready
 	i = 0;
-	last_read = 0;
 	while (i < 5)										// Read all bytes
 	{
 		i2c_read();
@@ -223,7 +223,7 @@ int	main()
 	while (i2c_aht20_init())							// Validate AHT20 calibration
 	{
 		i2c_stop();
-		uart_printstr("AHT20 init error | Retrying in 1s");
+		uart_printstr("AHT20 init error | Retrying in 1s\r\n");
 		_delay_ms(1000);
 	}
 
@@ -231,7 +231,7 @@ int	main()
 	{
 		if (i2c_aht20_measurement())					// AHT20 measurement
 		{
-			uart_printstr("AHT20 measurement error | Retrying in 2s");
+			uart_printstr("AHT20 measurement error | Retrying in 2s\r\n");
 			i2c_stop();
 		}
 		_delay_ms(2000);
