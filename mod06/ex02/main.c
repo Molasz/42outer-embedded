@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/21 20:37:42 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/21 20:55:36 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,9 @@ uint8_t	last_read = 0;
 uint8_t	last_status = 0;
 uint8_t	last_data = 0;
 uint8_t	data[5];
+
+uint8_t	temp_his[3];
+uint8_t	hum_his[3];
 
 void uart_init()
 {
@@ -119,14 +122,15 @@ void	i2c_read()
 
 void	print_data()
 {
-	uint32_t	temp, hum;
-	int32_t		temp_fix;
+	static uint8_t	i = 0;
+	uint32_t		temp, hum;
+	int32_t			temp_fix;
 
 	hum = ((uint32_t)data[0] << 12) | ((uint32_t)data[1] << 4) | (data[2] >> 4);
 	temp = (((uint32_t)data[2] & 0x0F) << 16) | ((uint32_t)data[3] << 8) | (data[4]);
 
-	hum = (uint32_t)(((uint64_t) hum * 10000) >> 20);
-	temp_fix = (int32_t)(((uint64_t)temp * 20000) >> 20) - 5000;
+	hum = (uint32_t)((((uint64_t) hum * 10000) + (1UL << 19)) >> 20);
+	temp_fix = (int32_t)((((uint64_t)temp * 20000) + (1UL << 19)) >> 20) - 5000;
 
 	uart_printstr("Temperature: ");
 	if (temp_fix < 0)
