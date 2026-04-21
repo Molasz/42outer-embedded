@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/21 17:53:48 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/21 18:14:48 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ void	i2c_read()
 	i2c_status(read, "Read: ");
 }
 
-void	print_hex_value(char c)
+void	print_data()
 {
 	uint8_t	i = 0;
 
@@ -187,13 +187,13 @@ uint8_t	i2c_aht20_measurement()
 	if (i2c_validate_status(0x08)) return (1);
 	i2c_write(0x38 << 1 | 1);							// Read
 	if (i2c_validate_status(0x40)) return (1);
-	last_data = 0;
+	last_data = 1;
 	while (last_data & (1 << 7))						// Wait until measurement is ready
 	{
-		_delay_ms(10);
 		i2c_read();
 		if (i2c_validate_status(0x50)) return (1);
 		data[0] = last_data;
+		_delay_ms(10);
 	}
 	i = 0;
 	last_read = 0;
@@ -207,7 +207,8 @@ uint8_t	i2c_aht20_measurement()
 	last_read = 1;
 	i2c_read();
 	if (i2c_validate_status(0x58)) return (1);
-	print_hex_value(last_data);
+	data[6] = last_data;
+	print_data();
 	i2c_stop();
 	return (0);
 }
