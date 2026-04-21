@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/20 20:22:27 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/21 17:34:05 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,9 @@
 
 // 2-wire Serial Interface (21)
 
-const char	*hex = "0123456789abcdef";
-char	buff[3] = "  \0";
+#define HEX "0123456789ABCDEF"
+
+uint8_t	status;
 
 void uart_init()
 {
@@ -40,11 +41,10 @@ void	uart_printstr(const char *str)
 		uart_tx(str[i++]);
 }
 
-char	*int_hex(uint8_t n)
+void uart_printhex(uint8_t n)
 {
-	buff[1] = hex[n % 16];
-	buff[0] = hex[n / 16];
-	return (buff);
+	uart_tx(HEX[n / 16]);
+	uart_tx(HEX[n % 16]);
 }
 
 void	i2c_init()
@@ -66,10 +66,11 @@ void	i2c_stop()
 	while (TWCR & (1 << TWSTO));						// Wait until STOP complete
 }
 
-void	i2c_print_status()
+void	i2c_status()
 {
+	status = TWSR & 0xF8;
 	uart_printstr("0x");
-	uart_printstr(int_hex(TWSR & 0xF8));
+	uart_printhex(status);
 	uart_printstr("\r\n");
 }
 
@@ -80,6 +81,26 @@ void	i2c_ping(uint8_t addr)
 	while (!(TWCR & (1 << TWINT)));						// Wait until IC2 end operation
 }
 
+uint8_t	i2c_test()
+{
+	i2c_start();
+	i2c_status();
+	if (status != 0x08)									// Validate START
+	{
+		uart_printstr("START error\r\n");
+		return (1);
+	}
+	i2c_ping(0x38);										// AHT20 address
+	i2c_status();
+	if (status != 0x18)									// Validate write
+	{
+		uart_printstr("Ping error\r\n");
+		return (1);
+	}
+	i2c_stop();
+	return (0);
+}
+
 int	main()
 {
 	i2c_init();
@@ -87,11 +108,8 @@ int	main()
 
 	while (1)
 	{
-		i2c_start();
-		i2c_print_status();
-		i2c_ping(0x38);									// AHT20 address
-		i2c_print_status();
-		i2c_stop();
+		if (i2c_test())
+			i2c_stop();
 	}
 
 	return (0);
