@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/21 20:55:36 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/21 21:08:42 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,13 @@
 #define DEBUG 0
 #define HEX "0123456789ABCDEF"
 
-uint8_t	last_read = 0;
-uint8_t	last_status = 0;
-uint8_t	last_data = 0;
-uint8_t	data[5];
+uint8_t		last_read = 0;
+uint8_t		last_status = 0;
+uint8_t		last_data = 0;
+uint8_t		data[5];
 
-uint8_t	temp_his[3];
-uint8_t	hum_his[3];
+uint32_t	temp_his[3];
+uint32_t	hum_his[3];
 
 void uart_init()
 {
@@ -122,6 +122,39 @@ void	i2c_read()
 
 void	print_data()
 {
+	int32_t		temp;
+	uint32_t	hum;
+
+	if (!temp_his[2] || !hum_his[2])
+		return;
+
+	temp = (temp_his[0] + temp_his[1] + temp_his[2]) / 3;
+	hum = (hum_his[0] + hum_his[1] + hum_his[2]) / 3;
+
+	uart_printstr("Temperature: ");
+	if (temp < 0)
+	{
+		uart_tx('-');
+		temp = -temp;
+	}
+	uart_putnbr(temp / 100);
+	uart_tx('.');
+	temp %= 100;
+	if (temp < 10)
+		uart_tx('0');
+	uart_putnbr(temp);
+	uart_printstr("C, Humidity: ");
+	uart_putnbr(hum / 100);
+	uart_tx('.');
+	hum %= 100;
+	if (hum < 10)
+		uart_tx('0');
+	uart_putnbr(hum);
+	uart_printstr("%\r\n");
+}
+
+void	save_data()
+{
 	static uint8_t	i = 0;
 	uint32_t		temp, hum;
 	int32_t			temp_fix;
@@ -132,26 +165,18 @@ void	print_data()
 	hum = (uint32_t)((((uint64_t) hum * 10000) + (1UL << 19)) >> 20);
 	temp_fix = (int32_t)((((uint64_t)temp * 20000) + (1UL << 19)) >> 20) - 5000;
 
-	uart_printstr("Temperature: ");
-	if (temp_fix < 0)
-	{
-		uart_tx('-');
-		temp_fix = -temp_fix;
-	}
-	uart_putnbr(temp_fix / 100);
-	uart_tx('.');
-	temp_fix %= 100;
-	if (temp_fix < 10)
-		uart_tx('0');
-	uart_putnbr(temp_fix);
-	uart_printstr("C, Humidity: ");
-	uart_putnbr(hum / 100);
-	uart_tx('.');
-	hum %= 100;
-	if (hum < 10)
-		uart_tx('0');
-	uart_putnbr(hum);
-	uart_printstr("%\r\n");
+	temp_his[2] = temp_his[1];
+	temp_his[1] = temp_his[0];
+	temp_his[0] = temp_fix;
+
+	hum_his[2] = hum_his[1];
+	hum_his[1] = hum_his[0];
+	hum_his[0] = hum;
+
+	if (i >= 3)
+		print_data();
+	else
+		i++;
 }
 
 uint8_t	i2c_validate_status(uint8_t exp)
@@ -236,7 +261,7 @@ uint8_t	i2c_aht20_measurement()
 	last_read = 1;
 	i2c_read();
 	if (i2c_validate_status(TW_MR_DATA_NACK)) return (1);
-	print_data();
+	save_data();
 	i2c_stop();
 	return (0);
 }
