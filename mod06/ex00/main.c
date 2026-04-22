@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/21 17:34:05 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/22 12:08:17 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,13 +62,13 @@ void	i2c_start()
 
 void	i2c_stop()
 {
-	TWCR = (1 << TWEN) | (1 << TWSTO) | (1 << TWINT);	// STOP condition | Clear flag
+	TWCR = (1 << TWEN) | (1 << TWSTO) | (1 << TWINT);	// STOP condition | Clear flag, say to IC2 can start next operation
 	while (TWCR & (1 << TWSTO));						// Wait until STOP complete
 }
 
 void	i2c_status()
 {
-	status = TWSR & 0xF8;
+	status = TWSR & 0xF8;								// Read only status bits from TWSR
 	uart_printstr("0x");
 	uart_printhex(status);
 	uart_printstr("\r\n");
@@ -76,7 +76,7 @@ void	i2c_status()
 
 void	i2c_ping(uint8_t addr)
 {
-	TWDR = (addr << 1) | 0;								// Sensor addres + R/W
+	TWDR = (addr << 1) | 0;								// Sensor addres + 0 Read
 	TWCR = (1 << TWEN) | (1 << TWINT);					// Clear flag
 	while (!(TWCR & (1 << TWINT)));						// Wait until IC2 end operation
 }
