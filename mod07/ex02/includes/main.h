@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/23 15:57:19 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/23 19:48:33 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/23 21:59:35 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,10 @@ enum CMD_TYPE
 };
 
 # define MAGIC_NUM 0xDEADBEEF
-# define NODE_SIZE sizeof(node_t)	// 44 bytes
-# define SLOT E2END - (NODE_SIZE * 4)
+# define NODE_SIZE sizeof(node_t)
+# define NSLOTS 4
+# define SLOTS_START (E2END - (NODE_SIZE * NSLOTS))
+
+# define SLOT_ADDR(i) (SLOTS_START + (i * NODE_SIZE))
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/23 20:30:50 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/23 22:09:29 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 #include "eeprom.h"
 #include "uart.h"
 #include "utils.h"
+
+int8_t	slot = 0;
 
 void	node_init(node_t *node)
 {
@@ -26,27 +28,28 @@ void	node_init(node_t *node)
 
 uint8_t	check_magic(uint16_t addr)
 {
-	uint32_t	magic;
+	int8_t		i = 3;
+	uint32_t	magic = 0;
 
-	magic = eeprom_read(addr);
-	magic = magic << 8 | eeprom_read(addr + 1);
-	magic = magic << 16 | eeprom_read(addr + 2);
-	magic = magic << 24 | eeprom_read(addr + 3);
-
+	while (i >= 0)
+	{
+		magic = eeprom_read(addr + i) | magic << 8;
+		i--;
+	}
 	return (magic == MAGIC_NUM);
 }
 
-uint8_t	find_node(void)
+int8_t	find_node(void)
 {
 	uint8_t	i = 0;
 
 	while (i < 4)
 	{
-		if (check_magic(SLOT))
-			return (i + 1);
+		if (check_magic(SLOT_ADDR(i)))
+			return (i);
 		i++;
 	}
-	return (0);
+	return (-1);
 }
 
 enum CMD_TYPE	check_cmd(char *cmd)
@@ -75,7 +78,7 @@ void	status(node_t *node)
 		uart_printstr("\r\nPriority: ");
 		uart_printint(node->prio);
 		uart_printstr("\r\nSlot: ");
-		uart_printuint(1);			// ?? SLOT
+		uart_printuint(slot);
 		uart_printstr("\r\nTAG: ");
 		if (!node->tag[0])
 			uart_printstr("Unconfigured");
@@ -86,13 +89,58 @@ void	status(node_t *node)
 
 void	update_integ(node_t *node)
 {
-	(void) node;
+	uint8_t		*ptr, *end;
+	uint16_t	crc = 0;
+
+	ptr = (uint8_t *)&(node->id);
+	end = (uint8_t *)&(node->integ);
+	while (ptr < end)
+	{
+		crc = _crc16_update(crc, *ptr);
+		ptr++;
+	}
+	node->integ = crc;
+}
+
+void	write_node(node_t *node)
+{
+	uint16_t		*ptr, *end, addr, corrupt = 0;
+
+	if (slot < 0)
+		slot = 0;
+	end = (uint16_t *)&(node->integ) + sizeof(uint16_t);
+	ptr = (uint16_t *)&(node->magic);
+	while (ptr < end && slot < 4)
+	{
+		ptr = (uint16_t *)&(node->magic);
+		addr = SLOT_ADDR(slot);
+		while (ptr < end)
+		{
+			if (eeprom_safe_write(addr, *ptr))
+			{
+				if (corrupt)
+					uart_printstr("Fail\r\n");
+				else
+					uart_printstr("Corruption detected.\r\nRelocating config to slot ");
+				corrupt = 1;
+				uart_printuint(slot);
+				uart_printstr("... ");
+				slot++;
+				break;
+			}
+			ptr++;
+			addr++;
+		}
+		if (corrupt)
+			uart_printstr("Success\r\nDone.");
+	}
 }
 
 void	update_node(node_t *node)
 {
 	node->magic = MAGIC_NUM;
 	update_integ(node);
+	write_node(node);
 }
 
 void	set_id(node_t *node, char *str)
@@ -226,11 +274,10 @@ void	read_input(node_t *node)
 int	main()
 {
 	node_t	node;
-	uint8_t	slot;
 
 	uart_init();
 	slot = find_node();
-	if (!slot)
+	if (slot < 0)
 	{
 		uart_printstr("No node found\r\n");
 		node_init(&node);
@@ -240,7 +287,6 @@ int	main()
 		uart_printstr("Node found\r\n");
 		// Read saved node
 	}
-
 
 	while(1)
 	{

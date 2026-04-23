@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/23 15:55:09 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/23 16:25:09 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/23 21:38:48 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,4 +28,10 @@ void	eeprom_write(uint16_t addr, uint8_t data)
 	EEDR = data;
 	EECR |= (1 << EEMPE);
 	EECR |= (1 << EEPE);
+}
+
+uint8_t	eeprom_safe_write(uint16_t addr, uint8_t data)
+{
+	eeprom_write(addr, data);
+	return (eeprom_read(addr) != data);
 }
