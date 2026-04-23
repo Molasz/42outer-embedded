@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/23 15:57:19 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/23 16:48:57 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/23 19:48:33 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ typedef struct node_s
 	uint32_t	magic;
 	uint32_t	id;
 	int16_t		prio;
-	char		tag[32];
+	char		tag[33];
 	uint16_t	integ;
 } node_t;
 

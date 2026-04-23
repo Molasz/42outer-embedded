@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/23 19:04:14 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/23 20:30:50 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,16 +95,12 @@ void	update_node(node_t *node)
 	update_integ(node);
 }
 
-uint8_t	set_id(node_t *node, char *str)
+void	set_id(node_t *node, char *str)
 {
 	uint32_t	id = ft_atou(str);
 
-	if (id > UINT32_MAX)
-		return (1);
-
 	node->id = id;
 	update_node(node);
-	return (0);
 }
 
 uint8_t	set_prio(node_t *node, char *str)
@@ -141,19 +137,23 @@ uint8_t	run_cmd(enum CMD_TYPE cmd, node_t *node, char *value, uint8_t j)
 	switch (cmd)
 	{
 		case STATUS:
-			if (j) return (1);
+			if (j) 
+			{
+				uart_printuint(j);
+				return (1);
+			}
 			status(node);
 			break;
 		case ID:
 			if (!j || j > 10 || value[0] == '-' || validate_int(value) || (j == 10 && ft_strcmp(value, "4294967295") > 0))
 				return (1);
-			return (set_id(node, value));
+			set_id(node, value);
 			break;
 		case PRIO:
 			if (!j || j > 9 || validate_int(value)) return (1);
 			return (set_prio(node, value));
 		case TAG:
-			if (!j || j > 33 || validate_alnum(value)) return (1);
+			if (!j || j > 32 || validate_alnum(value)) return (1);
 			set_tag(node, value);
 			break;
 		case RESET:
@@ -167,29 +167,31 @@ uint8_t	run_cmd(enum CMD_TYPE cmd, node_t *node, char *value, uint8_t j)
 
 uint8_t	parse_input(char *str, node_t *node)
 {
-	char			cmd[16], value[33];
-	uint8_t			i = 0, j = 0;
+	uint8_t			i = 0, j = 0, sign = 0;
 	enum CMD_TYPE	cmd_type;
 
 	while (str[i] && str[i] != ' ')
-	{
-		cmd[i] = str[i];
 		i++;
-	}
-	cmd[i] = '\0';
-	cmd_type = check_cmd(cmd);
+	if (str[i] == ' ')
+		str[i++] = '\0';
+	cmd_type = check_cmd(str);
 	while (str[i] && str[i] == ' ')
 		i++;
-	if (cmd_type == PRIO || cmd_type == ID)
+	if (str[i] == '-')
 	{
+		sign = 1;
+		i++;
+	}
+	if (cmd_type == PRIO || cmd_type == ID)
 		while (str[i] && (str[i] == '0' && str[i + 1]))
 			i++;
-	}
-	while (str[i])
-		value[j++] = str[i++];
-	value[j] = '\0';
-
-	return (run_cmd(check_cmd(cmd), node, value, j));
+	if (sign)
+		str[i-- - 1] = '-';
+	while (str[i + j])
+		j++;
+	if (sign && j == 1)
+		return (1);
+	return (run_cmd(check_cmd(str), node, str + i, j));
 }
 
 void	read_input(node_t *node)

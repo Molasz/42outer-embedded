@@ -6,11 +6,11 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/23 15:30:21 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/23 18:44:18 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/23 20:03:06 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <avr/io.h>
+#include "utils.h"
 
 int8_t	ft_strcmp(const char *str1, const char *str2)
 {
@@ -18,7 +18,7 @@ int8_t	ft_strcmp(const char *str1, const char *str2)
 
 	while (str1[i] && str2[i])
 	{
-		if (!str1[i] || !str2[i] || str1[i] != str2[i])
+		if (str1[i] != str2[i])
 			break;
 		i++;
 	}
