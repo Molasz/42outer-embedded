@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/22 20:56:51 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/23 11:06:31 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,12 +171,10 @@ int	main()
 	data = uart_readhex();
 	uart_printstr("\r\n");
 	if (addr < 1024 && data < 256)
-	{
 		eeprom_write(addr, data);
-		eeprom_hexdump(addr);
-	}
 	else
 		uart_printstr("Bad format\r\n");
+	eeprom_hexdump(addr);
 
 	while(1);
 
