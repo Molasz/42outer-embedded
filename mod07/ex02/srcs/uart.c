@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/23 15:08:29 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/23 15:12:42 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/23 18:15:31 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,11 +40,36 @@ void	uart_printstr(const char *str)
 		uart_tx(str[i++]);
 }
 
-void	uart_printnbr(uint16_t nb)
+void	uart_printuint(uint32_t n)
 {
-	if (nb >= 10)
-		uart_printnbr(nb / 10);
-	uart_tx((nb % 10) + '0');
+	char	buff[11];
+	uint8_t	i = 0;
+
+	if (n == 0)
+	{
+		uart_tx('0');
+		return;
+	}
+
+	while (n > 0)
+	{
+		buff[i] = (n % 10) + '0';
+		n /= 10;
+		i++;
+	}
+
+	while (i--)
+		uart_tx(buff[i]);
+}
+
+void	uart_printint(int16_t n)
+{
+	if (n < 0)
+	{
+		uart_tx('-');
+		n = -n;
+	}
+	uart_printuint(n);
 }
 
 void	uart_printhex(uint8_t n)

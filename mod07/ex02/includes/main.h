@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/23 15:57:19 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/23 15:57:52 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/23 16:48:57 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,9 @@ typedef struct node_s
 {
 	uint32_t	magic;
 	uint32_t	id;
-	int16_t		priority;
+	int16_t		prio;
 	char		tag[32];
-	uint16_t	integrity;
+	uint16_t	integ;
 } node_t;
 
 enum CMD_TYPE
@@ -37,5 +37,6 @@ enum CMD_TYPE
 
 # define MAGIC_NUM 0xDEADBEEF
 # define NODE_SIZE sizeof(node_t)	// 44 bytes
+# define SLOT E2END - (NODE_SIZE * 4)
 
 #endif
