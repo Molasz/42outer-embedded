@@ -6,13 +6,13 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/23 15:30:21 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/23 18:15:46 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/23 18:44:18 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <avr/io.h>
 
-uint8_t	ft_strcmp(const char *str1, const char *str2)
+int8_t	ft_strcmp(const char *str1, const char *str2)
 {
 	uint8_t i = 0;
 

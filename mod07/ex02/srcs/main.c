@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/23 18:22:14 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/23 19:04:14 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,36 @@
 
 void	node_init(node_t *node)
 {
-	node->magic = MAGIC_NUM;
+	node->magic = 0;
 	node->id = 0;
 	node->prio = 0;
 	node->tag[0] = '\0';
 	node->integ = 0;
+}
+
+uint8_t	check_magic(uint16_t addr)
+{
+	uint32_t	magic;
+
+	magic = eeprom_read(addr);
+	magic = magic << 8 | eeprom_read(addr + 1);
+	magic = magic << 16 | eeprom_read(addr + 2);
+	magic = magic << 24 | eeprom_read(addr + 3);
+
+	return (magic == MAGIC_NUM);
+}
+
+uint8_t	find_node(void)
+{
+	uint8_t	i = 0;
+
+	while (i < 4)
+	{
+		if (check_magic(SLOT))
+			return (i + 1);
+		i++;
+	}
+	return (0);
 }
 
 enum CMD_TYPE	check_cmd(char *cmd)
@@ -59,6 +84,17 @@ void	status(node_t *node)
 	}
 }
 
+void	update_integ(node_t *node)
+{
+	(void) node;
+}
+
+void	update_node(node_t *node)
+{
+	node->magic = MAGIC_NUM;
+	update_integ(node);
+}
+
 uint8_t	set_id(node_t *node, char *str)
 {
 	uint32_t	id = ft_atou(str);
@@ -67,12 +103,13 @@ uint8_t	set_id(node_t *node, char *str)
 		return (1);
 
 	node->id = id;
+	update_node(node);
 	return (0);
 }
 
 uint8_t	set_prio(node_t *node, char *str)
 {
-	int16_t	prio;
+	int32_t	prio;
 
 	if (str[0] == '-')
 		prio = ft_atou(str + 1) * -1;
@@ -82,6 +119,7 @@ uint8_t	set_prio(node_t *node, char *str)
 	if (prio < INT16_MIN || prio > INT16_MAX)
 		return (1);
 	node->prio = prio;
+	update_node(node);
 	return (0);
 }
 
@@ -95,11 +133,7 @@ void	set_tag(node_t *node, char *str)
 		i++;
 	}
 	node->tag[i] = '\0';
-}
-
-void	reset(node_t *node)
-{
-	node_init(node);
+	update_node(node);
 }
 
 uint8_t	run_cmd(enum CMD_TYPE cmd, node_t *node, char *value, uint8_t j)
@@ -111,19 +145,19 @@ uint8_t	run_cmd(enum CMD_TYPE cmd, node_t *node, char *value, uint8_t j)
 			status(node);
 			break;
 		case ID:
-			if (!j || value[0] == '-' || validate_int(value)) return (1);
-			set_id(node, value);
+			if (!j || j > 10 || value[0] == '-' || validate_int(value) || (j == 10 && ft_strcmp(value, "4294967295") > 0))
+				return (1);
+			return (set_id(node, value));
 			break;
 		case PRIO:
-			if (!j || validate_int(value)) return (1);
-			set_prio(node, value);
-			break;
+			if (!j || j > 9 || validate_int(value)) return (1);
+			return (set_prio(node, value));
 		case TAG:
 			if (!j || j > 33 || validate_alnum(value)) return (1);
 			set_tag(node, value);
 			break;
 		case RESET:
-			reset(node);
+			node_init(node);
 			break;
 		default:
 			return (1);
@@ -135,6 +169,7 @@ uint8_t	parse_input(char *str, node_t *node)
 {
 	char			cmd[16], value[33];
 	uint8_t			i = 0, j = 0;
+	enum CMD_TYPE	cmd_type;
 
 	while (str[i] && str[i] != ' ')
 	{
@@ -142,8 +177,14 @@ uint8_t	parse_input(char *str, node_t *node)
 		i++;
 	}
 	cmd[i] = '\0';
+	cmd_type = check_cmd(cmd);
 	while (str[i] && str[i] == ' ')
 		i++;
+	if (cmd_type == PRIO || cmd_type == ID)
+	{
+		while (str[i] && (str[i] == '0' && str[i + 1]))
+			i++;
+	}
 	while (str[i])
 		value[j++] = str[i++];
 	value[j] = '\0';
@@ -183,10 +224,21 @@ void	read_input(node_t *node)
 int	main()
 {
 	node_t	node;
-
-	node_init(&node);
+	uint8_t	slot;
 
 	uart_init();
+	slot = find_node();
+	if (!slot)
+	{
+		uart_printstr("No node found\r\n");
+		node_init(&node);
+	}
+	else
+	{
+		uart_printstr("Node found\r\n");
+		// Read saved node
+	}
+
 
 	while(1)
 	{

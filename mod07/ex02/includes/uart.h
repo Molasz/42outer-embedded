@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/23 15:09:11 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/23 18:15:06 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/23 19:02:54 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ char	uart_rx(void);
 void	uart_tx(char c);
 void	uart_printstr(const char *str);
 void	uart_printuint(uint32_t n);
-void	uart_printint(int16_t n);
+void	uart_printint(int32_t n);
 void	uart_printhex(uint8_t n);
 void	uart_printaddr(uint32_t addr);
 

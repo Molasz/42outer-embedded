@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/23 15:08:29 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/23 18:15:31 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/23 19:02:42 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void	uart_printuint(uint32_t n)
 		uart_tx(buff[i]);
 }
 
-void	uart_printint(int16_t n)
+void	uart_printint(int32_t n)
 {
 	if (n < 0)
 	{
