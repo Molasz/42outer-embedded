@@ -6,12 +6,13 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/23 15:55:09 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/24 16:03:05 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/24 19:44:46 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "main.h"
 #include "eeprom.h"
+#include "uart.h"
 
 uint8_t	eeprom_read(uint16_t addr)
 {

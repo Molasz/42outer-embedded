@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 13:05:15 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/24 16:21:38 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/24 19:42:07 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,14 +51,14 @@ static uint8_t	check_magic(uint16_t addr)
 	return (magic == MAGIC_NUM);
 }
 
-static uint8_t	read_node(node_t *node)
+static uint8_t	read_node(node_t *node, uint8_t nslot)
 {
 	uint8_t		*ptr, *end;
 	uint16_t	addr;
 
 	end = (uint8_t *)&(node->integ) + sizeof(uint16_t);
 	ptr = (uint8_t *)&(node->magic);
-	addr = SLOT_ADDR(slot);
+	addr = SLOT_ADDR(nslot);
 	while (ptr < end)
 	{
 		*ptr = eeprom_read(addr);
@@ -79,7 +79,7 @@ void	find_node(node_t *node)
 			uart_printstr("Node found ");
 			uart_printuint(i);
 			uart_printstr("\r\n");
-			read_node(node);
+			read_node(node, i);
 			if (crc16(node) != node->integ)
 				uart_printstr("CRITICAL: Data corruption detected!\r\n");
 			else
@@ -130,10 +130,10 @@ static void	write_node(node_t *node)
 			ptr++;
 			addr++;
 		}
-	} while (ptr < end && slot_attm < 3);
+	} while (ptr < end && slot_attm < 4);
 	if (corrupt)
 	{
-		if (slot_attm < 3)
+		if (slot_attm < 4)
 			uart_printstr("Success\r\nDone.");
 		else
 		{
