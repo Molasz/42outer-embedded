@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/23 22:09:29 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/24 12:26:54 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,15 +104,15 @@ void	update_integ(node_t *node)
 
 void	write_node(node_t *node)
 {
-	uint16_t		*ptr, *end, addr, corrupt = 0;
+	uint8_t		*ptr, *end, corrupt = 0;
+	uint16_t	addr;
 
 	if (slot < 0)
 		slot = 0;
-	end = (uint16_t *)&(node->integ) + sizeof(uint16_t);
-	ptr = (uint16_t *)&(node->magic);
-	while (ptr < end && slot < 4)
+	end = (uint8_t *)&(node->integ) + sizeof(uint16_t);
+	do
 	{
-		ptr = (uint16_t *)&(node->magic);
+		ptr = (uint8_t *)&(node->magic);
 		addr = SLOT_ADDR(slot);
 		while (ptr < end)
 		{
@@ -121,8 +121,11 @@ void	write_node(node_t *node)
 				if (corrupt)
 					uart_printstr("Fail\r\n");
 				else
-					uart_printstr("Corruption detected.\r\nRelocating config to slot ");
-				corrupt = 1;
+				{
+					uart_printstr("Corruption detected.\r\n");
+					corrupt = 1;
+				}
+				uart_printstr("Reloacting config to slot ");
 				uart_printuint(slot);
 				uart_printstr("... ");
 				slot++;
@@ -131,8 +134,13 @@ void	write_node(node_t *node)
 			ptr++;
 			addr++;
 		}
-		if (corrupt)
+	} while (ptr < end && slot < 4);
+	if (corrupt)
+	{
+		if (slot >= 4)
 			uart_printstr("Success\r\nDone.");
+		else
+			uart_printstr("Fail\r\nCRITICAL EEPROM FAILURE: No slots remaining");
 	}
 }
 
@@ -239,7 +247,7 @@ uint8_t	parse_input(char *str, node_t *node)
 		j++;
 	if (sign && j == 1)
 		return (1);
-	return (run_cmd(check_cmd(str), node, str + i, j));
+	return (run_cmd(cmd_type, node, str + i, j));
 }
 
 void	read_input(node_t *node)
@@ -257,13 +265,13 @@ void	read_input(node_t *node)
 			i--;
 			uart_printstr("\b \b");
 		}
-		if (c >= ' ' && c <= '~')
+		if (c >= ' ' && c <= '~' && i < 48)
 		{
 			uart_tx(c);
 			buff[i++] = c;
 		}
 	}
-	while (c != '\r' && i < 48);
+	while (c != '\r');
 	buff[i] = '\0';
 	uart_printstr("\r\n");
 	if (parse_input(buff, node))
@@ -287,11 +295,16 @@ int	main()
 		uart_printstr("Node found\r\n");
 		// Read saved node
 	}
+	slot = 3;
 
 	while(1)
 	{
 		read_input(&node);
+		if (slot >= 4)
+			break;
 	}
+
+	while (1);
 
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/23 15:57:19 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/23 21:59:35 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/24 11:06:11 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include <avr/io.h>
 # include <util/crc16.h>
+# include <avr/eeprom.h>
 
 typedef struct node_s
 {
