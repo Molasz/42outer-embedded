@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 13:05:15 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/24 15:51:16 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/24 16:21:38 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,15 +76,17 @@ void	find_node(node_t *node)
 	{
 		if (check_magic(SLOT_ADDR(i)))
 		{
-			uart_printstr("Node found\r\n");
-			slot = i;
+			uart_printstr("Node found ");
+			uart_printuint(i);
+			uart_printstr("\r\n");
 			read_node(node);
 			if (crc16(node) != node->integ)
-			{
 				uart_printstr("CRITICAL: Data corruption detected!\r\n");
-				node_init(node);
+			else
+			{
+				slot = i;
+				return;
 			}
-			return;
 		}
 		i++;
 	}
