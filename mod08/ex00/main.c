@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/24 21:28:25 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/24 22:16:02 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,26 +41,25 @@ void	update_led(uint8_t l, uint8_t c)
 
 int	main()
 {
-	uint8_t	i = 0;
+	uint8_t	i;
 
 	DDRB |= (1 << DDB2) | (1 << DDB3) | (1 << DDB4) | (1 << DDB5);	// SS | MOSI | MISO | SCK | Output
 	SPCR |= (1 << SPE) | (1 << MSTR);								// Enable SPI | Master
 
-	spi_send(0x00);													// Start frame
-	spi_send(0x00);
-	spi_send(0x00);
-	spi_send(0x00);
+	i = 0;
+	while (i++ < 4)
+		spi_send(0x00);
 
+	i = 0;
 	while (i < 3)
 	{
 		update_led(!i, 2);											// 0 Blue | 1 Green | 2 Red
 		i++;
 	}
 
-	spi_send(0xFF);													// End frame
-	spi_send(0xFF);
-	spi_send(0xFF);
-	spi_send(0xFF);
+	i = 0;
+	while (i++ < 4)
+		spi_send(0xFF);
 
 	while (1);
 
