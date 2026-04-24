@@ -6,12 +6,11 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/23 15:55:09 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/24 12:23:48 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/24 15:51:43 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "eeprom.h"
-#include "uart.h"
 
 uint8_t	eeprom_read(uint16_t addr)
 {
@@ -33,11 +32,6 @@ void	eeprom_write(uint16_t addr, uint8_t data)
 
 uint8_t	eeprom_safe_write(uint16_t addr, uint8_t data)
 {
-	uart_printaddr(addr);
-	uart_printstr(": ");
-	uart_printhex(data);
-	uart_printstr("\r\n");
-	//eeprom_write(addr, data);
-	//return (eeprom_read(addr) != data);
-	return (0);
+	eeprom_write(addr, data);
+	return (eeprom_read(addr) != data);
 }

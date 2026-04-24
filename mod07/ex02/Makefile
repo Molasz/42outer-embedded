@@ -14,7 +14,7 @@ RM			= rm -rf
 SDIR		= srcs
 ODIR		= obj
 
-SRCS		= main.c uart.c eeprom.c utils.c
+SRCS		= main.c uart.c eeprom.c node.c input.c utils.c
 OBJS		= $(addprefix $(ODIR)/, $(SRCS:.c=.o))
 
 CFLAGS		 = -mmcu=$(MCU) -DF_CPU=$(F_CPU) -DBAUD=$(BAUD) -Os -Wall -Wextra -Werror -Iincludes
