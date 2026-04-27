@@ -6,26 +6,22 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/27 19:49:39 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/27 19:44:54 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <avr/io.h>
+#include <>
 #include <util/delay.h>
 
-// COLORS
-#define RED 0b001
-#define GREEN 0b010
-#define BLUE 0b100
-#define YELLOW 0b011
-#define CYAN 0b110
-#define MAGENTA 0b101
-#define WHITE 0b111
+uint8_t volatile flag = 0;
 
-uint8_t	state = 0;
-
-// Color sequence
-const uint8_t colors[] = { RED, GREEN, BLUE, YELLOW, CYAN, MAGENTA, WHITE};
+void	adc_init()
+{
+	ADMUX |= (1 << REFS0) | (1 << ADLAR);
+	ADCSRA |= (1 << ADEN) | (1 << ADIE) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
+	ADCSRA |= (1 << ADATE);										// Enable auto trigger mode
+}
 
 void	spi_send(uint8_t data)
 {
@@ -46,31 +42,45 @@ void	update_led(uint8_t l, uint8_t c)
 	uint8_t	i = 0;
 
 	spi_send(0xE1);
-	for (i = 0; i < 3; i++)
-		update_color(l && (c & (1 << (2 - i))));	// Only 1rs led & binary mask
+	while (i < 3)
+	{
+		update_color(l && c == i);
+		i++;
+	}
+}
+
+void	ADC_vect() __attribute__((signal));
+
+void	ADC_vect()
+{
+	n = ADCH;
+	flag = 1;
 }
 
 int	main()
 {
-	uint8_t	i, state = 0;
+	uint8_t	i, j = 0, state = 0;
 
 	DDRB |= (1 << DDB2) | (1 << DDB3) | (1 << DDB4) | (1 << DDB5);
 	SPCR |= (1 << SPE) | (1 << MSTR);
 
+	SREG |= (1 << SREG_I);
+	ADCSRA |= (1 << ADSC);										// Starts first ADC conversion
+
 	while (1)
 	{
-		for (i = 0; i < 4; i++)
-			spi_send(0x00);
-		for (i = 0; i < 3; i++)
-			update_led(!i, colors[state]);
-		for (i = 0; i < 4; i++)
-			spi_send(0xFF);
+		if (flag)
+		{
+			for (i = 0; i < 4; i++)
+				spi_send(0x00);
+			for (i = 0; i < 3; i++)
+				update_led(i == j, 2);
+			for (i = 0; i < 4; i++)
+				spi_send(0xFF);
+			flag = 0;
+		}
 
-		_delay_ms(1000);
-		if (state < 6)
-			state++;
-		else
-			state = 0;
+		_delay_ms(25);
 	}
 
 	return (0);

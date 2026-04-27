@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/24 22:11:59 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/27 19:51:06 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void	update_led(uint8_t l, uint8_t c)
 	spi_send(0xE1);
 	while (i < 3)
 	{
-		update_color(l && (c & (1 << (2 - i))));	// Only 1rs led & binary mask
+		update_color(l && (c & (1 << (2 - i))));
 		i++;
 	}
 }
@@ -63,16 +63,11 @@ int	main()
 	while (1)
 	{
 		i = 0;
-		while (i++ < 4)
+		for (i = 0; i < 4; i++)
 			spi_send(0x00);
-		i = 0;
-		while (i < 3)
-		{
+		for (i = 0; i < 3; i++)
 			update_led(i == j, colors[state]);
-			i++;
-		}
-		i = 0;
-		while (i++ < 4)
+		for (i = 0; i < 4; i++)
 			spi_send(0xFF);
 
 		_delay_ms(250);
