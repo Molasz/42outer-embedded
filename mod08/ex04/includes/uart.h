@@ -1,23 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.h                                            :+:      :+:    :+:   */
+/*   uart.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/04/23 15:31:12 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/27 20:56:47 by molasz-a         ###   ########.fr       */
+/*   Created: 2026/04/27 20:51:23 by molasz-a          #+#    #+#             */
+/*   Updated: 2026/04/27 20:52:12 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef UTILS_H
-# define UTILS_H
+#ifndef UART_H
+
+# define UART_H
 
 # include <avr/io.h>
 
-int8_t		ft_strcmp(const char *str1, const char *str2);
-uint32_t	ft_atou(const char *str);
-uint8_t		validate_int(char *str);
-uint8_t		validate_alnum(char *str);
+# define UART_RATE (F_CPU / (8UL * BAUD)) - 1
+
+void	uart_init();
+char	uart_rx(void);
+void	uart_tx(char c);
+void	uart_printstr(const char *str);
 
 #endif
+

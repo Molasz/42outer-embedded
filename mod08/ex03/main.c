@@ -6,15 +6,16 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/27 19:44:54 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/27 20:55:05 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <avr/io.h>
-#include <>
+#include <avr/interrupt.h>
 #include <util/delay.h>
 
 uint8_t volatile flag = 0;
+uint8_t volatile n = 0;
 
 void	adc_init()
 {
@@ -39,14 +40,11 @@ void	update_color(uint8_t i)
 
 void	update_led(uint8_t l, uint8_t c)
 {
-	uint8_t	i = 0;
+	uint8_t	i;
 
 	spi_send(0xE1);
-	while (i < 3)
-	{
+	for (i = 0; i < 3; i++)
 		update_color(l && c == i);
-		i++;
-	}
 }
 
 void	ADC_vect() __attribute__((signal));
@@ -59,10 +57,13 @@ void	ADC_vect()
 
 int	main()
 {
-	uint8_t	i, j = 0, state = 0;
+	uint8_t	i;
+	int8_t	j;
 
 	DDRB |= (1 << DDB2) | (1 << DDB3) | (1 << DDB4) | (1 << DDB5);
 	SPCR |= (1 << SPE) | (1 << MSTR);
+
+	adc_init();
 
 	SREG |= (1 << SREG_I);
 	ADCSRA |= (1 << ADSC);										// Starts first ADC conversion
@@ -71,16 +72,19 @@ int	main()
 	{
 		if (flag)
 		{
+			if (n == 255) j = 2;
+			else if (n >= 170) j = 1;
+			else if (n >= 85) j = 0;
+			else j = -1;
+
 			for (i = 0; i < 4; i++)
 				spi_send(0x00);
 			for (i = 0; i < 3; i++)
-				update_led(i == j, 2);
+				update_led(j >= i, 2);
 			for (i = 0; i < 4; i++)
 				spi_send(0xFF);
 			flag = 0;
 		}
-
-		_delay_ms(25);
 	}
 
 	return (0);

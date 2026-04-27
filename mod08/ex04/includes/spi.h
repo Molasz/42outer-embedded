@@ -1,23 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.h                                            :+:      :+:    :+:   */
+/*   spi.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/04/23 15:31:12 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/27 20:56:47 by molasz-a         ###   ########.fr       */
+/*   Created: 2026/04/27 20:50:51 by molasz-a          #+#    #+#             */
+/*   Updated: 2026/04/27 21:59:23 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef UTILS_H
-# define UTILS_H
+#ifndef SPI_H
+# define SPI_H
 
 # include <avr/io.h>
 
-int8_t		ft_strcmp(const char *str1, const char *str2);
-uint32_t	ft_atou(const char *str);
-uint8_t		validate_int(char *str);
-uint8_t		validate_alnum(char *str);
+void	spi_init(void);
+void	spi_send(uint8_t data);
+void	update_led(uint8_t led, uint8_t r, uint8_t g, uint8_t b);
+void	update_leds(int8_t led, uint8_t r, uint8_t g, uint8_t b);
 
 #endif
+
+

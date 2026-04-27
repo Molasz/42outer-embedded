@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/27 19:51:06 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/27 20:54:41 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,14 +43,11 @@ void	update_color(uint8_t i)
 
 void	update_led(uint8_t l, uint8_t c)
 {
-	uint8_t	i = 0;
+	uint8_t	i;
 
 	spi_send(0xE1);
-	while (i < 3)
-	{
+	for (i = 0; i < 3; i++)
 		update_color(l && (c & (1 << (2 - i))));
-		i++;
-	}
 }
 
 int	main()
