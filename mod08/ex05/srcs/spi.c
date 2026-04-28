@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 20:47:54 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/28 13:30:29 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/28 15:56:12 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,20 +31,7 @@ static void	update_led(color_t *leds, int8_t led)
 
 	spi_send(0xE1);
 	for (i = 0; i < 3; i++)
-	{
-		switch (i)
-		{
-			case 2:
-				spi_send(leds[led].r);
-				break;
-			case 1:
-				spi_send(leds[led].g);
-				break;
-			case 0:
-				spi_send(leds[led].b);
-				break;
-		}
-	}
+		spi_send(leds[led].raw[2 - i]);
 }
 
 void	update_leds(color_t *leds)

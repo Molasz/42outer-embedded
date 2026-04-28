@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/28 13:31:58 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/28 16:01:13 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ int	main()
 	SREG |= (1 << SREG_I);
 	ADCSRA |= (1 << ADSC);		// Starts first ADC conversion
 	
-
 	while (1)
 	{
 		if (!(PIND & (1 << PIND2)))
@@ -65,19 +64,7 @@ int	main()
 
 		if (GPIOR1 & (1 << RV1_FLAG))
 		{
-			switch (curr_color)
-			{
-				case 0:
-					leds[curr_led].r = GPIOR0;
-					break;
-				case 1:
-					leds[curr_led].g = GPIOR0;
-					break;
-				case 2:
-					leds[curr_led].b = GPIOR0;
-					break;
-			}
-
+			leds[curr_led].raw[curr_color] = GPIOR0;
 			update_leds(leds);
 			GPIOR1 &= ~(1 << RV1_FLAG);
 		}
