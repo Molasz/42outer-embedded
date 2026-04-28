@@ -6,12 +6,13 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 20:47:54 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/27 22:12:00 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/28 10:44:34 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "spi.h"
 #include "uart.h"
+#include "main.h"
 
 void	spi_init(void)
 {
@@ -25,21 +26,21 @@ void	spi_send(uint8_t data)
 	while (!(SPSR & (1 << SPIF)));
 }
 
-void	update_led(uint8_t led, uint8_t r, uint8_t g, uint8_t b)
+void	update_led(int8_t led, uint8_t aled, uint8_t r, uint8_t g, uint8_t b)
 {
 	int	i;
 
 	spi_send(0xE1);
 	for (i = 0; i < 3; i++)
 	{
-		if (led)
+		if (led < 0 || led == aled)
 		{
 			switch (i)
 			{
 				case 2:
 					spi_send(r);
 					break;
-				case 1:
+			case 1:
 					spi_send(g);
 					break;
 				case 0:
@@ -48,7 +49,20 @@ void	update_led(uint8_t led, uint8_t r, uint8_t g, uint8_t b)
 			}
 		}
 		else
-			spi_send(0x00);
+		{
+			switch (i)
+			{
+				case 2:
+					spi_send(leds[aled].r);
+					break;
+				case 1:
+					spi_send(leds[aled].g);
+					break;
+				case 0:
+					spi_send(leds[aled].b);
+					break;
+			}
+		}
 	}
 }
 
@@ -59,7 +73,15 @@ void	update_leds(int8_t led, uint8_t r, uint8_t g, uint8_t b)
 	for (i = 0; i < 4; i++)
 		spi_send(0x00);
 	for (i = 0; i < 3; i++)
-		update_led(led < 0 || led == i, r, g, b);
+	{
+		update_led(led, i, r, g, b);
+		if (led == i)
+		{
+			leds[i].r = r;
+			leds[i].g = g;
+			leds[i].b = b;
+		}
+	}
 	for (i = 0; i < 4; i++)
 		spi_send(0xFF);
 }

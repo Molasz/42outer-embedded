@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/27 22:12:43 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/28 10:48:43 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 #include "uart.h"
 #include "spi.h"
 #include "utils.h"
+
+color_t	leds[3];
 
 void	set_rgb(uint8_t r, uint8_t g, uint8_t b)
 {
@@ -46,7 +48,7 @@ void	call_wheel(void)
 		wheel(i);
 		_delay_ms(8);
 	}
-	update_leds(-1, 0, 0, 0);
+	update_leds(0, leds[0].r, leds[0].g, leds[0].b);
 }
 
 void	call_hex(char *str)
@@ -70,6 +72,8 @@ void	user_input(void)
 	do
 	{
 		c = uart_rx();
+		if (c == '#' && !i)
+			continue;
 		if (c == 127 && i)
 		{
 			i--;
@@ -91,8 +95,20 @@ void	user_input(void)
 		uart_printstr("Bad user input\r\n");
 }
 
-int	main()
+void	leds_init(void)
 {
+	int	i;
+
+	for (i = 0; i < 3; i++)
+	{
+		leds[i].r = 0x00;
+		leds[i].g = 0x00;
+		leds[i].b = 0x00;
+	}
+}
+
+int	main()
+{	
 	spi_init();
 	uart_init();
 
