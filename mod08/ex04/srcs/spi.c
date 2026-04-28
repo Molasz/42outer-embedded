@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 20:47:54 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/28 10:44:34 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/28 15:51:09 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	update_led(int8_t led, uint8_t aled, uint8_t r, uint8_t g, uint8_t b)
 				case 2:
 					spi_send(r);
 					break;
-			case 1:
+				case 1:
 					spi_send(g);
 					break;
 				case 0:
@@ -49,20 +49,7 @@ void	update_led(int8_t led, uint8_t aled, uint8_t r, uint8_t g, uint8_t b)
 			}
 		}
 		else
-		{
-			switch (i)
-			{
-				case 2:
-					spi_send(leds[aled].r);
-					break;
-				case 1:
-					spi_send(leds[aled].g);
-					break;
-				case 0:
-					spi_send(leds[aled].b);
-					break;
-			}
-		}
+			spi_send(leds[aled].raw[2 - i]);
 	}
 }
 

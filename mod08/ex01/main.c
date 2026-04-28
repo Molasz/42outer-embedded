@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/27 19:49:39 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/28 15:16:46 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@
 
 uint8_t	state = 0;
 
-// Color sequence
 const uint8_t colors[] = { RED, GREEN, BLUE, YELLOW, CYAN, MAGENTA, WHITE};
 
 void	spi_send(uint8_t data)
@@ -47,7 +46,7 @@ void	update_led(uint8_t l, uint8_t c)
 
 	spi_send(0xE1);
 	for (i = 0; i < 3; i++)
-		update_color(l && (c & (1 << (2 - i))));	// Only 1rs led & binary mask
+		update_color(l && (c & (1 << (2 - i))));	// Only 1rs led & binary mask | MAGENTA color & BLUE led 0b101 & 0b100 = 0b100 = 1
 }
 
 int	main()
@@ -67,6 +66,8 @@ int	main()
 			spi_send(0xFF);
 
 		_delay_ms(1000);
+		
+		state = (state + 1) % 3;
 		if (state < 6)
 			state++;
 		else
