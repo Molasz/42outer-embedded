@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/28 10:48:43 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/28 13:33:34 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,8 @@ int	main()
 {	
 	spi_init();
 	uart_init();
+	leds_init();
+	update_leds(0, 0, 0, 0);
 
 	while (1)
 		user_input();
