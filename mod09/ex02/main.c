@@ -6,21 +6,11 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/29 09:57:09 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/29 09:57:38 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <avr/io.h>
-
-volatile uint8_t	toggle = 0;
-
-void	timer_init(void)
-{
-	TCCR1B |= (1 << WGM12);
-	OCR1A = 31250 - 1;
-	TCCR1B |= (1 << CS12);
-	TIMSK1 |= (1 << OCIE1A);
-}
 
 void	i2c_init(void)
 {
@@ -51,40 +41,28 @@ void	i2c_write(unsigned char data)
 void	i2c_init_expander(void)
 {
 	i2c_start();
-	i2c_write(0x40);		// Expansor addres [0100000] + Write [0]
-	i2c_write(0x06);		// Configure port 0
-	i2c_write(0x00);		// IO00 - IO07 Output
+	i2c_write(0x40);
+	i2c_write(0x06);
+	i2c_write(0);		// IO00 - IO07 Output
+	i2c_write(0);		// I100 - I207 Output
 	i2c_stop();
 }
 
-void	i2c_toggle_led(uint8_t led)
+void	i2c_segments(void)
 {
 	i2c_start();
-	i2c_write(0x40);		// Expansor addres [0100000] + Write [0]
-	i2c_write(0x02);		// Output port 0
-	if (toggle)				// Toggle pin
-		i2c_write(0xFF);
-	else
-		i2c_write(~(1 << led));
+	i2c_write(0x40);
+	i2c_write(0x02);
+	i2c_write(0x7F);	// 01111111
+	i2c_write(0x5B);	// 01011011
 	i2c_stop();
-	toggle = !toggle;
-}
-
-void	TIMER1_COMPA_vect() __attribute__((signal));
-
-void	TIMER1_COMPA_vect()
-{
-	i2c_toggle_led(3);		// D9 | IO03
 }
 
 int	main()
 {
 	i2c_init();
 	i2c_init_expander();
-	timer_init();
-	i2c_toggle_led(3);
-
-	SREG |= (1 << SREG_I);
+	i2c_segments();
 
 	while (1);
 

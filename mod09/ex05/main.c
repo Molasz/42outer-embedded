@@ -6,18 +6,42 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/29 09:57:09 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/29 11:31:19 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <avr/io.h>
+#include <util/delay.h>
 
-volatile uint8_t	toggle = 0;
+#define S0 0b00111111
+#define S1 0b00000110
+#define S2 0b01011011
+#define S3 0b01001111
+#define S4 0b01100110
+#define S5 0b01101101
+#define S6 0b01111101
+#define S7 0b00000111
+#define S8 0b01111111
+#define S9 0b01101111
+
+const uint8_t numbers[] =  {S0, S1, S2, S3, S4, S5, S6, S7, S8, S9};
+
+volatile uint16_t	n = 0;
+
+void	TIMER1_COMPA_vect() __attribute__((signal));
+
+void	TIMER1_COMPA_vect()
+{
+	if (n < 9999)
+		n++;
+	else
+		n = 0;
+}
 
 void	timer_init(void)
 {
 	TCCR1B |= (1 << WGM12);
-	OCR1A = 31250 - 1;
+	OCR1A = 62500;
 	TCCR1B |= (1 << CS12);
 	TIMSK1 |= (1 << OCIE1A);
 }
@@ -51,30 +75,51 @@ void	i2c_write(unsigned char data)
 void	i2c_init_expander(void)
 {
 	i2c_start();
-	i2c_write(0x40);		// Expansor addres [0100000] + Write [0]
-	i2c_write(0x06);		// Configure port 0
-	i2c_write(0x00);		// IO00 - IO07 Output
+	i2c_write(0x40);
+	i2c_write(0x06);
+	i2c_write(0);
+	i2c_write(0);
 	i2c_stop();
 }
 
-void	i2c_toggle_led(uint8_t led)
+void	i2c_segments_blank(void)
 {
 	i2c_start();
-	i2c_write(0x40);		// Expansor addres [0100000] + Write [0]
-	i2c_write(0x02);		// Output port 0
-	if (toggle)				// Toggle pin
-		i2c_write(0xFF);
-	else
-		i2c_write(~(1 << led));
+	i2c_write(0x40);
+	i2c_write(0x02);
+	i2c_write(0xFF);
+	i2c_write(0x00);
 	i2c_stop();
-	toggle = !toggle;
 }
 
-void	TIMER1_COMPA_vect() __attribute__((signal));
-
-void	TIMER1_COMPA_vect()
+void	i2c_segments(uint8_t n, uint8_t d)
 {
-	i2c_toggle_led(3);		// D9 | IO03
+	i2c_segments_blank();
+
+	i2c_start();
+	i2c_write(0x40);
+	i2c_write(0x02);
+	i2c_write(~(1 << d));		// Digit
+	i2c_write(numbers[n]);		// Number
+	i2c_stop();
+
+	_delay_ms(1);
+}
+
+void	update_segment(uint16_t n)
+{
+	uint8_t	i, digits[4] = {0, 0, 0, 0};
+
+	for (i = 0; i < 4; i++)
+	{
+		digits[i] = n % 10;
+		n /= 10;
+	}
+
+	i2c_segments(digits[3], 4);
+	i2c_segments(digits[2], 5);
+	i2c_segments(digits[1], 6);
+	i2c_segments(digits[0], 7);
 }
 
 int	main()
@@ -82,11 +127,10 @@ int	main()
 	i2c_init();
 	i2c_init_expander();
 	timer_init();
-	i2c_toggle_led(3);
-
 	SREG |= (1 << SREG_I);
 
-	while (1);
+	while (1)
+		update_segment(n);
 
 	return (0);
 }
