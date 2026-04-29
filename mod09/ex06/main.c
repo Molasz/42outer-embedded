@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/29 11:42:41 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/29 11:50:54 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,15 +26,12 @@
 
 const uint8_t numbers[] =  {S0, S1, S2, S3, S4, S5, S6, S7, S8, S9};
 
-volatile uint16_t	n = 0;
 volatile uint8_t	digits[4] = {0, 0, 0, 0};
 
-void	timer_init(void)
+void	adc_init()
 {
-	TCCR1B |= (1 << WGM12);
-	OCR1A = 62500;
-	TCCR1B |= (1 << CS12);
-	TIMSK1 |= (1 << OCIE1A);
+	ADMUX |= (1 << REFS0);
+	ADCSRA |= (1 << ADEN) | (1 << ADIE) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0) | (1 << ADATE);
 }
 
 void	i2c_init(void)
@@ -90,34 +87,22 @@ void	i2c_segments(uint8_t n, uint8_t d)
 	i2c_start();
 	i2c_write(0x40);
 	i2c_write(0x02);
-	i2c_write(~(1 << d));		// Digit
-	i2c_write(numbers[n]);		// Number
+	i2c_write(~(1 << d));
+	i2c_write(numbers[n]);
 	i2c_stop();
 
 	_delay_ms(1);
 }
 
-void	update_digits(void)
+void	update_digits(uint16_t n)
 {
-	uint8_t	i, t;
+	uint8_t	i;
 
-	for (i = 0, t = n; i < 4; i++)
+	for (i = 0; i < 4; i++)
 	{
-		digits[i] = t % 10;
-		t /= 10;
+		digits[i] = n % 10;
+		n /= 10;
 	}
-}
-
-void	TIMER1_COMPA_vect() __attribute__((signal));
-
-void	TIMER1_COMPA_vect()
-{
-	if (n < 9999)
-		n++;
-	else
-		n = 0;
-
-	update_digits();
 }
 
 void	update_segment()
@@ -128,12 +113,23 @@ void	update_segment()
 	i2c_segments(digits[0], 7);
 }
 
+void	ADC_vect() __attribute__((signal));
+
+void	ADC_vect()
+{
+	uint16_t n;
+	n = ADCL;
+	n |= (ADCH << 8);
+	update_digits(n);
+}
+
 int	main()
 {
 	i2c_init();
 	i2c_init_expander();
-	timer_init();
+	adc_init();
 	SREG |= (1 << SREG_I);
+	ADCSRA |= (1 << ADSC);
 
 	while (1)
 		update_segment();
