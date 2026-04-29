@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/29 09:57:22 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/29 12:41:27 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ void	i2c_update_leds(uint8_t n)
 	i2c_start();
 	i2c_write(0x40);
 	i2c_write(0x02);
-	i2c_write(0xE & ~(n << 1) | 0xF1);
+	i2c_write((0xE & ~(n << 1)) | 0xF1);
 	i2c_stop();
 }
 
