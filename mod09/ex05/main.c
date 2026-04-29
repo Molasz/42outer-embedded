@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/29 11:42:41 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/29 12:06:40 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,8 @@ void	i2c_segments(uint8_t n, uint8_t d)
 
 void	update_digits(void)
 {
-	uint8_t	i, t;
+	uint8_t		i;
+	uint16_t	t;
 
 	for (i = 0, t = n; i < 4; i++)
 	{
@@ -122,9 +123,12 @@ void	TIMER1_COMPA_vect()
 
 void	update_segment()
 {
-	i2c_segments(digits[3], 4);
-	i2c_segments(digits[2], 5);
-	i2c_segments(digits[1], 6);
+	if (digits[3] > 0)
+		i2c_segments(digits[3], 4);
+	if (digits[3] > 0 || digits[2] > 0)
+		i2c_segments(digits[2], 5);
+	if (digits[3] > 0 || digits[2] > 0 || digits[1] > 0)
+		i2c_segments(digits[1], 6);
 	i2c_segments(digits[0], 7);
 }
 
