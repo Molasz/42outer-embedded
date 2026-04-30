@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:23:42 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/30 15:24:46 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/30 19:09:08 by molasz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,11 @@ void	btn_debounce(uint8_t pin)
 	_delay_ms(20);
 }
 
+void	update_leds(uint8_t t)
+{
+	PORTB = (PORTB & 0xE8) | (t & 0x07) | ((t & 0x08) << 1); // Clear bits 0 1 2 4, assign 0 1 2 | 4
+}
+
 int	main(void)
 {
 	uint8_t	t = 0;
@@ -31,18 +36,15 @@ int	main(void)
     {
 		if (!(PIND & (1 << PIND2)))
 		{
-			if (t < 15)
-				t++;
+			update_leds(++t);
 			btn_debounce(PIND2);
 		}
         if (!(PIND & (1 << PIND4)))
 		{
-			if (t > 0)
-				t--;
+			update_leds(--t);
 			btn_debounce(PIND4);
 		}
 
-		PORTB = (PORTB & 0xE8) | (t & 0x07) | ((t & 0x08) << 1); // Clear bits 0 1 2 4, assign 0 1 2 | 4
     }
 	return (0);
 }

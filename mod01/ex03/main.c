@@ -6,12 +6,19 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:22:23 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/30 15:31:52 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/30 19:11:49 by molasz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <avr/io.h>
 #include <util/delay.h>
+
+void	btn_debounce(uint8_t pin)
+{
+	_delay_ms(20);
+	while (!(PIND & (1 << pin)));
+	_delay_ms(20);
+}
 
 int	main(void)
 {
@@ -33,18 +40,15 @@ int	main(void)
 		if (duty < 10 && !(PIND & (1 << PIND2)))
 		{
 			duty++;
-			_delay_ms(100);
-			while (!(PIND & (1 << PIND2)));
-			_delay_ms(100);
+			OCR1A = pass * duty;				// Updates duty dynamically
+			btn_debounce(PIND2);
 		}
         if (duty > 1 && !(PIND & (1 << PIND4)))
 		{
 			duty--;
-			_delay_ms(100);
-			while (!(PIND & (1 << PIND4)));
-			_delay_ms(100);
+			OCR1A = pass * duty;				// Updates duty dynamically
+			btn_debounce(PIND4);
 		}
-		OCR1A = pass * duty;				// Updates duty dynamically
 	}
 
 	return (0);
