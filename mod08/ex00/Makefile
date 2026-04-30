@@ -12,7 +12,7 @@ CFLAGS		= -Wall -Wextra -Werror -Os
 all: hex flash
 
 hex: main.c
-	$(CC) -mmcu=$(MCU) -DF_CPU=$(F_CPU) $(CFLAGS) main.c -o main.bin
+	$(CC) -mmcu=$(MCU) -DF_CPU=$(F_CPU) -DBAUD=$(BAUD) $(CFLAGS) main.c -o main.bin
 	$(OBJCOPY) -O ihex main.bin main.hex
 
 flash: hex
