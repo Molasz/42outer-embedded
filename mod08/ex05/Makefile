@@ -38,10 +38,7 @@ flash: hex
 
 clean:
 	$(RM) $(ODIR)
-
-fclean: clean
 	$(RM) $(NAME).bin $(NAME).hex
 
-re: fclean all
 
-.PHONY: all dir hex flash clean fclean re
+.PHONY: all dir hex flash clean
