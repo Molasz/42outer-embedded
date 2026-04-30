@@ -78,8 +78,8 @@ void	set_rgb(char *hex)
 void	read_hex(void)
 {
 	char	buff[BUFF_SIZE];
+	uint8_t	i = 0;
 	char	c = 0;
-	char	i = 0;
 
 	while (c != '\r' && i < 7)
 	{

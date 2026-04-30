@@ -80,7 +80,7 @@ uint16_t	uart_readhex(void)
 {
 	uint8_t		i = 0;
 	uint16_t	n = 0;
-	char	c;
+	char		c = 0;
 
 	while (i < 3 && !(c == ' ' && i))
 	{

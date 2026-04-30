@@ -9,7 +9,6 @@ NAME		= main
 CC			= avr-gcc
 OBJCOPY		= avr-objcopy
 AVRDUDE		= avrdude
-CFLAGS		= -Wall -Wextra -Werror -Os
 RM			= rm -rf
 
 SDIR		= srcs
@@ -18,9 +17,9 @@ ODIR		= obj
 SRCS		= main.c spi.c adc.c
 OBJS		= $(addprefix $(ODIR)/, $(SRCS:.c=.o))
 
-CFLAGS		 = -mmcu=$(MCU) -DF_CPU=$(F_CPU) -DBAUD=$(BAUD) $(CFLAGS) -Iincludes
+CFLAGS		 = -mmcu=$(MCU) -DF_CPU=$(F_CPU) -DBAUD=$(BAUD) -Wall -Wextra -Werror -Os -Iincludes
 
-all: dir hex flash
+all: hex flash
 
 dir:
 	mkdir -p $(ODIR)
@@ -31,7 +30,7 @@ $(ODIR)/%.o: $(SDIR)/%.c
 $(NAME).bin: $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(NAME).bin
 
-hex: $(NAME).bin
+hex: dir $(NAME).bin
 	$(OBJCOPY) -O ihex $(NAME).bin $(NAME).hex
 
 flash: hex

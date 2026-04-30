@@ -59,7 +59,7 @@ void	i2c_init_expander(void)
 	i2c_stop();
 }
 
-uint8_t	i2c_read_btn(uint8_t pin)
+uint8_t	i2c_read_btn(void)
 {
 	uint8_t	read;
 
@@ -92,7 +92,7 @@ int	main(void)
 
 	while (1)
 	{
-		read = i2c_read_btn(0);	// SW3 | IO00
+		read = i2c_read_btn();
 		if (!(1 & read))
 		{
 			if (n < 7)
@@ -102,7 +102,7 @@ int	main(void)
 			i2c_update_leds(n);
 			_delay_ms(50);
 			do
-				read = i2c_read_btn(0);
+				read = i2c_read_btn();
 			while (!(1 & read));
 			_delay_ms(50);
 		}
