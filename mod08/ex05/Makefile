@@ -9,6 +9,7 @@ NAME		= main
 CC			= avr-gcc
 OBJCOPY		= avr-objcopy
 AVRDUDE		= avrdude
+CFLAGS		= -Wall -Wextra -Werror -Os
 RM			= rm -rf
 
 SDIR		= srcs
@@ -17,7 +18,7 @@ ODIR		= obj
 SRCS		= main.c spi.c adc.c
 OBJS		= $(addprefix $(ODIR)/, $(SRCS:.c=.o))
 
-CFLAGS		 = -mmcu=$(MCU) -DF_CPU=$(F_CPU) -DBAUD=$(BAUD) -Os -Wall -Wextra -Werror -Iincludes
+CFLAGS		 = -mmcu=$(MCU) -DF_CPU=$(F_CPU) -DBAUD=$(BAUD) $(CFLAGS) -Iincludes
 
 all: dir hex flash
 
