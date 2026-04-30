@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/20 16:28:16 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/30 15:37:35 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ volatile uint16_t	n = 0;
 volatile uint8_t	state = 0;
 char				buff[5] = "    \0";
 
-void uart_init()
+void uart_init(void)
 {
 	UCSR0A |= (1 << U2X0);
 	UBRR0 = (F_CPU / (8UL * BAUD)) - 1;
@@ -48,7 +48,7 @@ void	uart_putnbr(uint16_t nb)
 	uart_tx((nb % 10) + '0');
 }
 
-void timer_init()
+void timer_init(void)
 {
 	TCCR1B |= (1 << WGM12);
 	OCR1A = 312;
@@ -56,9 +56,9 @@ void timer_init()
 	TCCR1B |= (1 << CS12) | (1 << CS10);
 }
 
-void	ADC_vect() __attribute__((signal));
+void	ADC_vect(void) __attribute__((signal));
 
-void	ADC_vect()
+void	ADC_vect(void)
 {
 	if (!flag)
 	{
@@ -68,7 +68,7 @@ void	ADC_vect()
 	}
 }
 
-int	main()
+int	main(void)
 {
 	ADMUX |= (1 << REFS0);
 	ADCSRA |= (1 << ADEN) | (1 << ADIE) | (1 << ADATE) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);

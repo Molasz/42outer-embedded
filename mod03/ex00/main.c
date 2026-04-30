@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:22:08 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/16 16:17:19 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/30 15:33:38 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 uint8_t	state = 0;
 
-void	timer_init()
+void	timer_init(void)
 {
 	TCCR1B |= (1 << WGM12);
 	TIMSK1 |= (1 << OCIE1A);
@@ -29,7 +29,7 @@ void set_color(uint8_t pin)
 	PORTD |= (1 << pin);									// On actual color
 }
 
-void	update_rgb()
+void	update_rgb(void)
 {
 	if (!state)
 		set_color(PORT5);									// Red
@@ -44,14 +44,14 @@ void	update_rgb()
 		state++;
 }
 
-void	__vector_11() __attribute__((section(".vector11"), signal, used));
+void	__vector_11(void) __attribute__((section(".vector11"), signal, used));
 
-void	__vector_11()
+void	__vector_11(void)
 {
 	update_rgb();
 }
 
-int	main()
+int	main(void)
 {
 	DDRD |= (1 << DDD3) | (1 << DDD5) | (1 << DDD6);		// Blue Red Green
 

@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/29 09:57:38 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/30 15:44:19 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void	i2c_segments(void)
 	i2c_stop();
 }
 
-int	main()
+int	main(void)
 {
 	i2c_init();
 	i2c_init_expander();

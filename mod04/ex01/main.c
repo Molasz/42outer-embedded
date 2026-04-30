@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/17 12:21:18 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/30 15:35:20 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 volatile int	state = 0;
 volatile int8_t	direction = 0;
 
-void	init_timers()
+void	init_timers(void)
 {
 	TCCR0A |= (1 << COM0A1) | (1 << WGM01);
 	OCR0A = 78;								// 16M / 1024 / 200 | 200Hz
@@ -29,9 +29,9 @@ void	init_timers()
 	TCCR1B |= (1 << CS10);
 }
 
-void	TIMER0_COMPA_vect() __attribute__((signal));
+void	TIMER0_COMPA_vect(void) __attribute__((signal));
 
-void	TIMER0_COMPA_vect()
+void	TIMER0_COMPA_vect(void)
 {
 	if ((!state && direction) || (state >= 25500 && !direction))
 		direction = !direction;
@@ -43,7 +43,7 @@ void	TIMER0_COMPA_vect()
 	OCR1A = state / 100;
 }
 
-int	main()
+int	main(void)
 {
 	DDRB |= (1 << DDB1);
 

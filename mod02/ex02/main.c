@@ -6,13 +6,13 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:31 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/16 11:42:20 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/30 15:32:57 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <avr/io.h>
 
-void uart_init()
+void uart_init(void)
 {
 	UCSR0A |= (1 << U2X0);
 	UBRR0 = (F_CPU / (8UL * BAUD)) - 1;
@@ -32,7 +32,7 @@ void	uart_tx(char c)
 	UDR0 = c;
 }
 
-int	main()
+int	main(void)
 {
 	uart_init();
 	while (1)

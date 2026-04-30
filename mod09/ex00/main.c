@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/29 09:57:09 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/30 15:43:05 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ void	TIMER1_COMPA_vect()
 	i2c_toggle_led(3);		// D9 | IO03
 }
 
-int	main()
+int	main(void)
 {
 	i2c_init();
 	i2c_init_expander();

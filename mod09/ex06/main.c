@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/29 11:50:54 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/30 15:43:34 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ const uint8_t numbers[] =  {S0, S1, S2, S3, S4, S5, S6, S7, S8, S9};
 
 volatile uint8_t	digits[4] = {0, 0, 0, 0};
 
-void	adc_init()
+void	adc_init(void)
 {
 	ADMUX |= (1 << REFS0);
 	ADCSRA |= (1 << ADEN) | (1 << ADIE) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0) | (1 << ADATE);
@@ -105,7 +105,7 @@ void	update_digits(uint16_t n)
 	}
 }
 
-void	update_segment()
+void	update_segment(void)
 {
 	i2c_segments(digits[3], 4);
 	i2c_segments(digits[2], 5);
@@ -113,9 +113,9 @@ void	update_segment()
 	i2c_segments(digits[0], 7);
 }
 
-void	ADC_vect() __attribute__((signal));
+void	ADC_vect(void) __attribute__((signal));
 
-void	ADC_vect()
+void	ADC_vect(void)
 {
 	uint16_t n;
 	n = ADCL;
@@ -123,7 +123,7 @@ void	ADC_vect()
 	update_digits(n);
 }
 
-int	main()
+int	main(void)
 {
 	i2c_init();
 	i2c_init_expander();

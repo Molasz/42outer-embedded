@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/27 20:55:05 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/30 15:42:04 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 uint8_t volatile flag = 0;
 uint8_t volatile n = 0;
 
-void	adc_init()
+void	adc_init(void)
 {
 	ADMUX |= (1 << REFS0) | (1 << ADLAR);
 	ADCSRA |= (1 << ADEN) | (1 << ADIE) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
@@ -47,15 +47,15 @@ void	update_led(uint8_t l, uint8_t c)
 		update_color(l && c == i);
 }
 
-void	ADC_vect() __attribute__((signal));
+void	ADC_vect(void) __attribute__((signal));
 
-void	ADC_vect()
+void	ADC_vect(void)
 {
 	n = ADCH;
 	flag = 1;
 }
 
-int	main()
+int	main(void)
 {
 	uint8_t	i;
 	int8_t	j;

@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/22 12:21:44 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/30 15:39:19 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ uint8_t	last_data = 0;
 uint8_t	data[7];
 uint8_t	delay_flag = 0;
 
-void uart_init()
+void uart_init(void)
 {
 	UCSR0A |= (1 << U2X0);
 	UBRR0 = (F_CPU / (8UL * BAUD)) - 1;
@@ -65,14 +65,14 @@ void	i2c_status(uint8_t data, char *str)
 	}
 }
 
-void	i2c_init()
+void	i2c_init(void)
 {
 	TWSR &= ~((1 << TWPS1) | (1 << TWPS0));				// Prescaler 1
 	TWBR = 72;											// 16M / (16 + (2 * TWBR) * prescaler) = 100k (21.5.2)
 	TWCR |= (1 << TWEN);								// Enable IC2
 }
 
-void	i2c_start()
+void	i2c_start(void)
 {
 	int8_t	start;
 
@@ -82,7 +82,7 @@ void	i2c_start()
 	i2c_status(start, "Start: ");
 }
 
-void	i2c_stop()
+void	i2c_stop(void)
 {
 	TWCR = (1 << TWEN) | (1 << TWSTO) | (1 << TWINT);	// STOP condition | Clear flag
 	while (TWCR & (1 << TWSTO));						// Wait until STOP complete
@@ -96,7 +96,7 @@ void	i2c_write(unsigned char data)
 	i2c_status(data, "Write: ");
 }
 
-void	i2c_read()
+void	i2c_read(void)
 {
 	uint8_t	read;
 
@@ -132,7 +132,7 @@ uint8_t	i2c_validate_status(uint8_t exp)
 	return (0);
 }
 
-uint8_t	i2c_aht20_init()
+uint8_t	i2c_aht20_init(void)
 {
 	if (DEBUG)
 		uart_printstr("AHT20 init\r\n");
@@ -166,7 +166,7 @@ uint8_t	i2c_aht20_init()
 	return (0);
 }
 
-uint8_t	i2c_aht20_measurement()
+uint8_t	i2c_aht20_measurement(void)
 {
 	uint8_t	i;
 
@@ -216,7 +216,7 @@ uint8_t	i2c_aht20_measurement()
 	return (0);
 }
 
-int	main()
+int	main(void)
 {
 
 	i2c_init();

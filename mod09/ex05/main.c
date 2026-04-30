@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/29 12:06:40 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/30 15:43:53 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,9 +109,9 @@ void	update_digits(void)
 	}
 }
 
-void	TIMER1_COMPA_vect() __attribute__((signal));
+void	TIMER1_COMPA_vect(void) __attribute__((signal));
 
-void	TIMER1_COMPA_vect()
+void	TIMER1_COMPA_vect(void)
 {
 	if (n < 9999)
 		n++;
@@ -121,7 +121,7 @@ void	TIMER1_COMPA_vect()
 	update_digits();
 }
 
-void	update_segment()
+void	update_segment(void)
 {
 	if (digits[3] > 0)
 		i2c_segments(digits[3], 4);
@@ -132,7 +132,7 @@ void	update_segment()
 	i2c_segments(digits[0], 7);
 }
 
-int	main()
+int	main(void)
 {
 	i2c_init();
 	i2c_init_expander();

@@ -6,13 +6,13 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:22:12 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/29 11:25:48 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/30 15:32:03 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <avr/io.h>
 
-int	main()
+int	main(void)
 {
 	DDRB |= (1 << DDB1);		// 13.3.1 Alternate port function
 								// 15.11 Timer/Counter

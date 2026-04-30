@@ -6,14 +6,14 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:22:08 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/16 12:21:22 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/30 15:35:02 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <avr/io.h>
 #include <util/delay.h>
 
-void	init_rgb()
+void	init_rgb(void)
 {
 	DDRD |= (1 << DDD3) | (1 << DDD5) | (1 << DDD6);
 																			// 13.3 Alt port
@@ -48,7 +48,7 @@ void	wheel(uint8_t pos)
 	}
 }
 
-int	main()
+int	main(void)
 {
 	uint8_t	pos = 0;
 

@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/28 16:25:52 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/30 15:41:39 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void	update_led(uint8_t l, uint8_t c)
 		update_color(l && (c & (1 << (2 - i))));	// Only 1rs led & binary mask | MAGENTA color & BLUE led 0b101 & 0b100 = 0b100 = 1
 }
 
-int	main()
+int	main(void)
 {
 	uint8_t	i, state = 0;
 

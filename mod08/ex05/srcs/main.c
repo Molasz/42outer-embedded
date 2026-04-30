@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/28 16:01:13 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/30 15:42:52 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static void	btn_delay(uint8_t pin)
 	_delay_ms(50);
 }
 
-int	main()
+int	main(void)
 {
 	color_t	leds[3];
 	uint8_t	curr_color = 0, curr_led = 0;

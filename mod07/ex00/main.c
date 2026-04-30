@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/22 20:38:12 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/30 15:40:34 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 #define HEX "0123456789ABCDEF"
 
-void uart_init()
+void uart_init(void)
 {
 	UCSR0A |= (1 << U2X0);
 	UBRR0 = (F_CPU / (8UL * BAUD)) - 1;
@@ -90,7 +90,7 @@ void	eeprom_hexdump(uint16_t addr)
 	uart_printstr("|\r\n");
 }
 
-int	main()
+int	main(void)
 {
 	uint16_t	i;
 

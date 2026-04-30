@@ -6,13 +6,13 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 20:48:39 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/27 20:56:23 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/30 15:42:25 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "uart.h"
 
-void	uart_init()
+void	uart_init(void)
 {
 	UCSR0A |= (1 << U2X0);
 	UBRR0 = UART_RATE;

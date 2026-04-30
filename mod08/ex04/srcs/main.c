@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/28 15:47:27 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/30 15:42:17 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ void	leds_init(void)
 	}
 }
 
-int	main()
+int	main(void)
 {	
 	spi_init();
 	uart_init();

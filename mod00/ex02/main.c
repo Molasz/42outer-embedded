@@ -6,13 +6,13 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:23:20 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/15 16:22:58 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/30 15:25:04 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <avr/io.h>
 
-int	main()
+int	main(void)
 {										// 13.2.3
 	DDRB |= (1 << DDB0);				// Write 1
 	DDRD &= ~(1 << DDD2);				// Read 0

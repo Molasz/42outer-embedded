@@ -6,13 +6,13 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:22:18 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/15 16:33:20 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/30 15:31:57 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <avr/io.h>
 
-int	main()
+int	main(void)
 {
 	DDRB	|= (1 << DDB1);						// 15.11 Timer/Counter
 	TCCR1A	|= (1 << COM1A1) | (1 << WGM11);	// 15.3 1-0 Toggle PB1 on compare match

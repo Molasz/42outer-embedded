@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/20 12:16:39 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/30 15:38:18 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 volatile uint8_t	n;
 volatile uint8_t	flag = 0;
 
-void	rgb_init()
+void	rgb_init(void)
 {
 	DDRD |= (1 << DDD3) | (1 << DDD5) | (1 << DDD6);
 	TCCR0A |= (1 << WGM00) | (1 << WGM01) | (1 << COM0A1) | (1 << COM0B1);
@@ -50,7 +50,7 @@ void	wheel(uint8_t pos)
 	}
 }
 
-void	adc_init()
+void	adc_init(void)
 {
 	ADMUX |= (1 << REFS0) | (1 << ADLAR);
 	ADCSRA |= (1 << ADEN) | (1 << ADIE) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
@@ -66,7 +66,7 @@ void	update_led(uint8_t n, uint8_t lim, uint8_t pin)
 		PORTB &= ~(1 << pin);
 }
 
-void	update_leds()
+void	update_leds(void)
 {
 	update_led(n, 63, PORTB0);
 	update_led(n, 127, PORTB1);
@@ -76,15 +76,15 @@ void	update_leds()
 	wheel(n);
 }
 
-void	ADC_vect() __attribute__((signal));
+void	ADC_vect(void) __attribute__((signal));
 
-void	ADC_vect()
+void	ADC_vect(void)
 {
 	n = ADCH;
 	flag = 1;
 }
 
-int	main()
+int	main(void)
 {
 	DDRB |= (1 << DDB0) | (1 << DDB1) | (1 << DDB2) | (1 << DDB4);
 

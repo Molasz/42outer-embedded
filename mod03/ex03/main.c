@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:22:08 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/16 12:28:46 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/30 15:34:50 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 #define BUFF_SIZE 8
 
-void	init_rgb()
+void	init_rgb(void)
 {
 	DDRD |= (1 << PD3) | (1 << PD5) | (1 << PD6);
 																			// 13.3 Alt port
@@ -25,7 +25,7 @@ void	init_rgb()
 	TCCR2B |= (1 << CS20);													// 17.11
 }
 
-void uart_init()
+void uart_init(void)
 {
 	UCSR0A |= (1 << U2X0);
 	UBRR0 = (F_CPU / (8UL * BAUD)) - 1;
@@ -65,11 +65,7 @@ uint8_t	char_hex(char c)
 
 uint8_t	str_hex(char *hex)
 {
-	uint8_t	n;
-
-	n = char_hex(hex[0]);
-	n += char_hex(hex[1]);
-	return (n);
+	return (char_hex(hex[0]) << 4 | char_hex(hex[1]));
 }
 
 void	set_rgb(char *hex)
@@ -79,7 +75,7 @@ void	set_rgb(char *hex)
 	OCR2B = str_hex(hex + 4);
 }
 
-void	read_hex()
+void	read_hex(void)
 {
 	char	buff[BUFF_SIZE];
 	char	c = 0;
@@ -107,7 +103,7 @@ void	read_hex()
 		set_rgb(buff + 1);
 }
 
-int	main()
+int	main(void)
 {
 	init_rgb();
 	set_rgb("000000");

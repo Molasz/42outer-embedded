@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/20 12:10:00 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/30 15:35:53 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ char		buff[3] = "  \0";
 volatile uint8_t	n;
 volatile uint8_t	flag = 0;
 
-void uart_init()
+void uart_init(void)
 {
 	UCSR0A |= (1 << U2X0);
 	UBRR0 = (F_CPU / (8UL * BAUD)) - 1;
@@ -49,7 +49,7 @@ char	*int_hex(uint8_t n)
 	return (buff);
 }
 
-void timer_init()
+void timer_init(void)
 {
 	TCCR1B |= (1 << WGM12);
 	OCR1A = 312;														// Timer top
@@ -57,9 +57,9 @@ void timer_init()
 	TCCR1B |= (1 << CS12) | (1 << CS10);
 }
 
-void	ADC_vect() __attribute__((signal));
+void	ADC_vect(void) __attribute__((signal));
 
-void	ADC_vect()
+void	ADC_vect(void)
 {
 	if (!flag)
 	{
@@ -69,7 +69,7 @@ void	ADC_vect()
 	TIFR1 |= (1 << OCF1B);												// Clear timer flag
 }
 
-int	main()
+int	main(void)
 {																		// ADC 23.9
 	ADMUX &= ~((1 << MUX3) | (1 << MUX2) | (1 << MUX1) | (1 << MUX0));	// Input channel ADC0 (23-4)
 	ADMUX |= (1 << REFS0) | (1 << ADLAR);								// 0 - 1 AVCC max reference (23-3) | Align left

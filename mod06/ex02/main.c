@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/22 12:29:40 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/30 15:40:22 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ uint8_t		delay_flag = 0;
 uint32_t	temp_his[3] = {0, 0, 0};
 uint32_t	hum_his[3] = {0, 0, 0};
 
-void uart_init()
+void uart_init(void)
 {
 	UCSR0A |= (1 << U2X0);
 	UBRR0 = (F_CPU / (8UL * BAUD)) - 1;
@@ -76,14 +76,14 @@ void	i2c_status(uint8_t data, char *str)
 	}
 }
 
-void	i2c_init()
+void	i2c_init(void)
 {
 	TWSR &= ~((1 << TWPS1) | (1 << TWPS0));
 	TWBR = 72;
 	TWCR |= (1 << TWEN);
 }
 
-void	i2c_start()
+void	i2c_start(void)
 {
 	int8_t	start;
 
@@ -93,7 +93,7 @@ void	i2c_start()
 	i2c_status(start, "Start: ");
 }
 
-void	i2c_stop()
+void	i2c_stop(void)
 {
 	TWCR = (1 << TWEN) | (1 << TWSTO) | (1 << TWINT);
 	while (TWCR & (1 << TWSTO));
@@ -107,7 +107,7 @@ void	i2c_write(unsigned char data)
 	i2c_status(data, "Write: ");
 }
 
-void	i2c_read()
+void	i2c_read(void)
 {
 	uint8_t	read;
 
@@ -122,7 +122,7 @@ void	i2c_read()
 	i2c_status(read, "Read: ");
 }
 
-void	print_data()
+void	print_data(void)
 {
 	static uint8_t	i = 0;
 	int32_t			temp;
@@ -158,7 +158,7 @@ void	print_data()
 	uart_printstr("%\r\n");
 }
 
-void	save_data()														// Update history arrays
+void	save_data(void)													// Update history arrays
 {
 	temp_his[2] = temp_his[1];
 	temp_his[1] = temp_his[0];
@@ -178,7 +178,7 @@ uint8_t	i2c_validate_status(uint8_t exp)
 	return (0);
 }
 
-uint8_t	i2c_aht20_init()
+uint8_t	i2c_aht20_init(void)
 {
 	if (DEBUG)
 		uart_printstr("AHT20 init\r\n");
@@ -212,7 +212,7 @@ uint8_t	i2c_aht20_init()
 	return (0);
 }
 
-uint8_t	validate_crc()													// CRC8 Validation
+uint8_t	validate_crc(void)												// CRC8 Validation
 {
 	uint8_t	crc = 0xFF;													// CRC initial value | AHT20 datasheet
 	uint8_t	raw_data[6] = {aht20_state, data[0], data[1], data[2], data[3], data[4]};
@@ -235,7 +235,7 @@ uint8_t	validate_crc()													// CRC8 Validation
 	return (!(crc == last_data));										// If same as last byte readed data is correct
 }
 
-uint8_t	i2c_aht20_measurement()
+uint8_t	i2c_aht20_measurement(void)
 {
 	uint8_t	i;
 
@@ -288,7 +288,7 @@ uint8_t	i2c_aht20_measurement()
 	return (0);
 }
 
-int	main()
+int	main(void)
 {
 
 	i2c_init();

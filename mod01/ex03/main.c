@@ -6,14 +6,14 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:22:23 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/15 16:35:08 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/30 15:31:52 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <avr/io.h>
 #include <util/delay.h>
 
-int	main()
+int	main(void)
 {
 	int			duty = 5;
 	uint16_t	pass;

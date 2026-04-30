@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:01 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/15 19:53:39 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/30 15:32:29 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # define PASS "pass"
 # define BUFF_SIZE 32
 
-void uart_init()
+void uart_init(void)
 {
 	UCSR0A |= (1 << U2X0);
 	UBRR0 = (F_CPU / (8UL * BAUD)) - 1;
@@ -105,7 +105,7 @@ void	blink_leds(uint8_t pin, char *str)
 	uart_printstr("\r\n\r\n");
 }
 
-int	main()
+int	main(void)
 {
 	int	r;
 

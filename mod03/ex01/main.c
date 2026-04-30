@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:22:08 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/16 12:11:51 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/30 15:34:31 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ uint8_t	state = 0;
 // Color sequence
 const uint8_t colors[] = { RED, GREEN, BLUE, YELLOW, CYAN, MAGENTA, WHITE};
 
-void	timer_init()
+void	timer_init(void)
 {
 	TCCR1B |= (1 << WGM12);
 	TIMSK1 |= (1 << OCIE1A);
@@ -35,7 +35,7 @@ void	timer_init()
 	TCCR1B |= (1 << CS12) | (1 << CS10);
 }
 
-void	update_rgb()
+void	update_rgb(void)
 {
 	PORTD &= ~((1 << PD3) | (1 << PD5) | (1 << PD6));
 	PORTD |= colors[state];								// On actual color
@@ -46,14 +46,14 @@ void	update_rgb()
 		state++;
 }
 
-void	__vector_11() __attribute__((section(".vector11"), signal, used));
+void	__vector_11(void) __attribute__((section(".vector11"), signal, used));
 
-void	__vector_11()
+void	__vector_11(void)
 {
 	update_rgb();
 }
 
-int	main()
+int	main(void)
 {
 	DDRD |= (1 << DDD3) | (1 << DDD5) | (1 << DDD6);
 

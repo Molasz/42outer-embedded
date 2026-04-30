@@ -6,14 +6,14 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:22 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/15 19:38:44 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/30 15:32:45 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-void uart_init()
+void uart_init(void)
 {
 	UCSR0A |= (1 << U2X0);
 	UBRR0 = (F_CPU / (8UL * BAUD)) - 1;
@@ -36,15 +36,15 @@ char	update_case(char c)
 	return (c);
 }
 
-void	__vector_18() __attribute__((section(".vector18"), signal, used));
+void	__vector_18(void) __attribute__((section(".vector18"), signal, used));
 // Call __vector_18 when interruption 18 RX complete (11.1) is launched
 
-void __vector_18()
+void __vector_18(void)
 {
 	uart_tx(update_case(UDR0));								// Reads from UDR0 directly
 }
 
-int	main()
+int	main(void)
 {
 	uart_init();
 	SREG |= (1 << SREG_I);

@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/20 12:15:00 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/04/30 15:37:56 by molasz-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,13 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
-#define TS_OFFSET 324
-#define TS_GAIN 1
+#define TS_OFFSET 320
+#define TS_GAIN 122
 
 volatile uint8_t	flag = 0;
 volatile uint16_t	n = 0;
 
-void uart_init()
+void uart_init(void)
 {
 	UCSR0A |= (1 << U2X0);
 	UBRR0 = (F_CPU / (8UL * BAUD)) - 1;
@@ -49,7 +49,7 @@ void	uart_putnbr(uint16_t nb)
 	uart_tx((nb % 10) + '0');
 }
 
-void timer_init()
+void timer_init(void)
 {
 	TCCR1B |= (1 << WGM12);
 	OCR1A = 312;
@@ -57,9 +57,9 @@ void timer_init()
 	TCCR1B |= (1 << CS12) | (1 << CS10);
 }
 
-void	ADC_vect() __attribute__((signal));
+void	ADC_vect(void) __attribute__((signal));
 
-void	ADC_vect()
+void	ADC_vect(void)
 {
 	if (!flag)
 	{
@@ -70,7 +70,7 @@ void	ADC_vect()
 	TIFR1 |= (1 << OCF1B);
 }
 
-int	main()
+int	main(void)
 {
 	ADMUX |= (1 << REFS0) | (1 << REFS1) | (1 << MUX3);		// 1.1v reference (23.8) | ADC8 Temperature
 	ADCSRA |= (1 << ADEN) | (1 << ADIE) | (1 << ADATE) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
@@ -84,7 +84,7 @@ int	main()
 	{
 		if (flag)
 		{
-			uart_putnbr((n - TS_OFFSET) / TS_GAIN);			// Convert to celsius
+			uart_putnbr((n - TS_OFFSET) * 100 / TS_GAIN);			// Convert to celsius
 			uart_printstr("\r\n");
 			flag = 0;
 		}
