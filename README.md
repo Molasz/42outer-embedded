@@ -14,16 +14,16 @@ A 3-week intensive embedded programming bootcamp held at 42 Paris. Working direc
 
 | Module | Topic | Key concepts |
 |--------|-------|--------------|
-| [MOD00](#mod00--first-programs) | First Programs | Toolchain, GPIO, button debounce |
-| [MOD01](#mod01--timers) | Timers | Timer1 CTC & Fast PWM, duty cycle |
-| [MOD02](#mod02--uart-protocol) | UART Protocol | Serial TX/RX, interrupts, echo |
-| [MOD03](#mod03--rgb--advanced-timers) | RGB & Advanced Timers | Multi-channel PWM, color wheel |
-| [MOD04](#mod04--interruptions) | Interruptions | ISR, external interrupts, Timer0 |
-| [MOD05](#mod05--analog) | Analog | ADC 8/10-bit, potentiometer, LDR, NTC, internal temp sensor |
-| [MOD06](#mod06--i2c-protocol) | I2C Protocol | TWI peripheral, AHT20 sensor, temp & humidity |
-| [MOD07](#mod07--eeprom) | EEPROM | Non-volatile storage, wear leveling, CRC integrity |
-| [MOD08](#mod08--spi) | SPI | SPI master, WS2812-style RGB LEDs via shift registers |
-| [MOD09](#mod09--7-segments-display) | 7-Segment Display | I2C I/O expander, multiplexing, digit rendering |
+| [MOD00](mod00/) | First Programs | Toolchain, GPIO, button debounce |
+| [MOD01](mod01/) | Timers | Timer1 CTC & Fast PWM, duty cycle |
+| [MOD02](mod02/) | UART Protocol | Serial TX/RX, interrupts, echo |
+| [MOD03](mod03/) | RGB & Advanced Timers | Multi-channel PWM, color wheel |
+| [MOD04](mod04/) | Interruptions | ISR, external interrupts, Timer0 |
+| [MOD05](mod05/) | Analog | ADC 8/10-bit, potentiometer, LDR, NTC, internal temp sensor |
+| [MOD06](mod06/) | I2C Protocol | TWI peripheral, AHT20 sensor, temp & humidity |
+| [MOD07](mod07/) | EEPROM | Non-volatile storage, wear leveling, CRC integrity |
+| [MOD08](mod08/) | SPI | SPI master, WS2812-style RGB LEDs via shift registers |
+| [MOD09](mod09/) | 7-Segment Display | I2C I/O expander, multiplexing, digit rendering |
 
 ---
 
