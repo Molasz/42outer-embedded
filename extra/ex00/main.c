@@ -6,7 +6,7 @@
 /*   By: molasz-a <molasz.dev@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 01:21:38 by molasz-a          #+#    #+#             */
-/*   Updated: 2026/04/30 15:43:53 by molasz-a         ###   ########.fr       */
+/*   Updated: 2026/05/05 21:07:23 by molasz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ void	i2c_init_expander(void)
 void	i2c_segments_blank(void)
 {
 	i2c_start();
-	i2c_write(0x42);
+	i2c_write(0x40);
 	i2c_write(0x02);
 	i2c_write(0xFF);
 	i2c_write(0x00);
@@ -108,13 +108,6 @@ void	i2c_segments(uint8_t n, uint8_t d)
 
 	i2c_start();
 	i2c_write(0x40);
-	i2c_write(0x02);
-	i2c_write(~(1 << d));
-	i2c_write(numbers[n]);
-	i2c_stop();
-
-	i2c_start();
-	i2c_write(0x42);
 	i2c_write(0x02);
 	i2c_write(~(1 << d));
 	i2c_write(numbers[n]);
@@ -210,11 +203,9 @@ int	main(void)
 		{
 			btn_read = !btn_read;
 			_delay_ms(50);
+			i2c_segments_blank();
 			do
-			{
-				update_segment();
 				read = i2c_read_btn();
-			}
 			while (!(1 & read));
 			_delay_ms(50);
 		}
